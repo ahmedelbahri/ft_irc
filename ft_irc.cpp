@@ -35,8 +35,8 @@ int main(int ac, char **av)
 		if (listen(server.get_socket_fd(), MAX_QUEUE) == -1)
 			std::cerr << "Error: listen() failed" << std::endl, exit(1);
 
-		fd_set readset;
-		std::set<int>	clients;
+		fd_set				readset;
+		std::set<int>		clients;
 		std::cout << "waiting on port " << server.get_port() << std::endl;
 
 		while (true)
@@ -44,16 +44,18 @@ int main(int ac, char **av)
 			FD_ZERO(&readset); // FD_ZERO
 			FD_SET(server.get_socket_fd(), &readset); // FD_SET
 
-			std::cout << "Waiting for connection..." << std::endl;
+			std::cout << "Waiting for connection on port " << server.get_port() << std::endl;
 
-			std::set<int>::iterator itter;
-			for (itter = clients.begin(); itter != clients.end(); itter++)
+			for (std::set<int>::iterator itter = clients.begin(); itter != clients.end(); ++itter)
+			{
 				if (*itter >= 0)
 					FD_SET(*itter, &readset); // FD_SET
+				std::cout << *itter << std::endl;
+			}
 
-			itter = --clients.end();
-			if ((activity = select(*itter, &readset, NULL, NULL, NULL)) == -1) // select
-				std::cerr << "Error: select() failed" << std::endl, exit(1);
+			if (clients.size() > 0)
+				if ((activity = select(*(clients.rend()) + 1, &readset, NULL, NULL, NULL)) == -1) // select
+					std::cerr << "Error: select() failed" << std::endl, exit(1);
 
 			if (FD_ISSET(server.get_socket_fd(), &readset)) // FD_ISSET
 			{
@@ -63,11 +65,8 @@ int main(int ac, char **av)
 					exit(0);
 				}
 			}
+
 			std::cout << "Connection accepted" << std::endl;
-
-
-			pause();
-
 
 			while ((buffer_len = read(client_fd, buffer, 1024)) > 0)
 			{
