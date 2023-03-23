@@ -39,7 +39,7 @@ void	irc_server::init_server(void)
 	(this->addr).sin_family = AF_INET; // AF_INET
 	(this->addr).sin_port = htons(this->port); // htons
 	(this->addr).sin_addr.s_addr = htonl(INADDR_ANY); // htonl
-0
+
 	if (bind(this->sock_fd, (struct sockaddr *)&(this->addr), addr_len) == -1)
 		error("bind() failed");
 
@@ -70,48 +70,60 @@ void	irc_server::init_server(void)
 void	irc_server::check_pollable_discriptors(int &pollfd_size)
 {
 	int		size = pollfd_size;
-	int		client_fd;
-	bool	close_connection = false;
+	int		client_fd = 0;
 	int		len;
 	char	buffer[1024];
 	bool	check_poll_fd = false;
 	for (int i = 0; i < size; i++)
 	{
+		memset(buffer, 0, 1024);
 		if (poll_fd[i].revents == 0)
 			continue;
+		if (poll_fd[i].revents & POLLHUP) // check & POLLHUP
+		{
+			std::cout << "client " << poll_fd[i].fd << " disconnected." << std::endl;
+			close(poll_fd[i].fd);
+			poll_fd[i].fd = -1;
+			check_poll_fd = true;
+			continue;
+		}
 		if (poll_fd[i].revents != POLLIN)
-			error("poll() returned unexpected revents value.");
+			error("poll() returned unexpected revents value", poll_fd[i].revents);
 		if (poll_fd[i].fd == this->sock_fd)
 		{
-			do
+			while (client_fd != -1)
 			{
 				if ((client_fd = accept(this->sock_fd, (struct sockaddr *)&(this->addr), &addr_len)) < 0
 					&& (errno != EWOULDBLOCK))
 					error("accept() failed whith error number: ", errno);
-				std::cout << "Connection accepted." << std::endl;
-				poll_fd[pollfd_size].fd = client_fd;
-				poll_fd[pollfd_size].events = POLLIN;
-				pollfd_size++;
-			} while (client_fd < 0);
+				if (client_fd > 0 && pollfd_size < MAX_QUEUE)
+				{
+					std::cout << "Connection accepted." << std::endl;
+					poll_fd[pollfd_size].fd = client_fd;
+					poll_fd[pollfd_size].events = POLLIN;
+					pollfd_size++;
+				}
+				else if (client_fd > 0)
+					std::cout << "Connection refused." << std::endl, close(client_fd);
+			}
 		}
 		else
 		{
-			std::cout << "client " << poll_fd[i].fd << " sent a message." << std::endl;
-			close_connection = false;
+			std::cout << "client " << poll_fd[i].fd <<  " " << i << " sent a message." << std::endl;
 			while (true)
 			{
 				if ((len = recv(poll_fd[i].fd, buffer, 1024, 0)) < 0)
 				{
 					if (errno != EWOULDBLOCK)
-						std::cerr << "recv() failed whith error number: " << errno << std::endl, close_connection = true;
+						std::cerr << "Error: recv() failed whith error number: " << errno << std::endl;
 					break;
 				}
-				if (len == 0)
-				{
-					std::cout << "client " << poll_fd[i].fd << " disconnected." << std::endl;
-					close_connection = true;
-					break;
-				}
+				// if (len == 0)
+				// {
+				// 	std::cout << "client " << poll_fd[i].fd << " disconnected." << std::endl;
+				// 	close_connection = true;
+				// 	break;
+				// }
 				std::cout << "message received: " << buffer << std::endl;
 				// if ((len = send(poll_fd[i].fd, "message received.", len, 0)) < 0)
 				// {
@@ -120,16 +132,23 @@ void	irc_server::check_pollable_discriptors(int &pollfd_size)
 				// 	break;
 				// }
 			}
-			if (close_connection)
+		}
+	}
+	if (check_poll_fd)
+	{
+		check_poll_fd = false;
+		for (int i = 0; i < pollfd_size; i++)
+		{
+			if (poll_fd[i].fd == -1)
 			{
-				close(poll_fd[i].fd);
-				poll_fd[i].fd = -1;
-				// compress_array(poll_fd, pollfd_size, i);
-				// i--;
-				check_poll_fd = true;
+				for (int j = i; j + 1 < pollfd_size; j++)
+					poll_fd[j].fd = poll_fd[j + 1].fd;
+				pollfd_size--;
+				i--;
 			}
 		}
 	}
+	std::cout << "pollfd_size: " << pollfd_size << std::endl;
 }
 
 int main (int ac, char **av)
@@ -147,14 +166,9 @@ int main (int ac, char **av)
 	poll_fd[0].fd = server.fd();
 	poll_fd[0].events = POLLIN;
 
-	// std::set<int>	clients;
-	// clients.insert(server.fd());
-	// std::cout << "waiting on port " << server.port() << std::endl;
-	// std::set<int>::iterator	itter;
-
 	while (true)
 	{
-		std::cout << "waiting on port " << server.get_port() << std::endl;
+		// std::cout << "waiting on port " << server.get_port() << std::endl;
 		if ((activity = poll(poll_fd, pollfd_size, timeout)) == -1) // poll
 			error("poll() failed.");
 		if (activity == 0)
@@ -162,70 +176,7 @@ int main (int ac, char **av)
 
 		server.check_pollable_discriptors(pollfd_size);
 
-	// 	// if (clients.size() > 0)
-	// 	// {
-	// 		// std::cout << clients.size() << "|" << *(clients.rend()) << std::endl;
-	// 		// std::cout << "this is select" << std::endl;
-	// 		if ((activity = select(*(clients.rend()) + 1, &readset, NULL, NULL, NULL)) == -1) // select
-	// 			error("select() failed");
-	// 		exit(0);
-	// 	// }
-
-	// 	// accept_connection(server, client_fd, readset, clients);
-
-	// 	// if (client_fd != -1)
-	// 	// {
-	// 	// 	FD_SET(client_fd, &readset);
-	// 	// 	clients.insert(client_fd);
-	// 		// std::cout << "marker" << std::endl;
-	// 	// 	clients.insert(client_fd);
-	// 	// 	std::cout << "Connection accepted" << std::endl;
-	// 	// }
-	// 	// if (clients.size() > 0)
-	// 	// {
-	// 	// 	itter = clients.begin(), itter++;
-	// 	// 	while (itter != clients.end())
-	// 	// 	{
-	// 	// 		if (FD_ISSET(*itter, &readset)) // FD_ISSET
-	// 	// 		{
-	// 				// std::cout << "this is read" << std::endl;
-	// 				for (std::set<int>::iterator i = clients.begin(); i != clients.end(); ++i)
-	// 				{
-	// 					if (FD_ISSET(*i, &readset))
-	// 					{
-	// 						if (*i == server.fd())
-	// 							client_fd = accept_connection(server, readset, clients);
-	// 						else
-	// 						{
-	// 							if ((buffer_len = read(*itter, buffer, 1024)) > 0)
-	// 							{
-	// 								std::cout << buffer;
-	// 								// std::cout << "in\n";
-	// 								// if (buffer[buffer_len - 1] == '\n' && memset(buffer, 0, 1024))
-	// 								// 	break;
-	// 								// memset(buffer, 0, 1024);
-	// 							}
-	// 							// std::cout << buffer_len << std::endl;
-	// 							if (buffer_len == 0)
-	// 							{
-	// 								if (write(*itter, "Message received!\n", 18) == -1)
-	// 									error("write() failed on section 2");
-	// 								std::cout << "Client disconnected" << std::endl, close(*itter);
-	// 								// clients.erase(itter++);
-	// 							}
-	// 							// if (buffer_len == -1)
-	// 							// {
-	// 							// 	if (errno != EWOULDBLOCK && errno != EAGAIN)
-	// 							// 		error("read() failed with exit code: ", errno);
-	// 							// 	// exit(0);
-	// 							// }
-	// 						}
-	// 					}
-	// 				}
-	// 			// }
-	// 			// ++itter;
-	// 		// }
-	// 	// }
+		// server.
 	}
 	return (0);
 }

@@ -2,7 +2,7 @@
 #define FT_IRC_HPP
 
 #define PORT 80
-#define MAX_QUEUE 10
+#define MAX_QUEUE 2
 
 #include <iostream>
 #include <sys/socket.h>

@@ -1,7 +1,7 @@
 CPP = ft_irc.cpp
 HPP = ft_irc.hpp
 OBJ = $(CPP:.cpp=.o)
-CXXFLAGS = -Wall -Wextra -Werror -std=c++98
+CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -fsanitize=address
 CXX = c++
 NAME = ircserv
 
