@@ -16,9 +16,16 @@
 #include "irc_server.hpp"
 #include "irc_client.hpp"
 
+/* PASS Errors */
 #define ERR_NEEDMOREPARAMS(command)	"461 * "command": Not enough parameters\n"
 #define ERR_ALREADYREGISTERED		"462 * ::You may not reregister\n"
 #define ERR_PASSWDMISMATCH			"464 * ERR_PASSWDMISMATCH:Password incorrect\n"
+
+/* NICK Errors */
+#define ERR_NONICKNAMEGIVEN			"431 * ERR_NONICKNAMEGIVEN:No nickname given\n"
+#define ERR_NICKBEFOREPASS			"ERR_NICKBEFOREPASS:User not authenticated\n"
+#define ERR_NICKNAMEINUSE(nick)		"433 * "nick" :Nickname is already in use\n"
+
 
 class								irc_client;
 class								irc_server;

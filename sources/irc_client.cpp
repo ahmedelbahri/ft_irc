@@ -2,7 +2,7 @@
 
 irc_client::irc_client(void)
 {
-	this->authenticated = false;
+	this->authenticated = 0;
 }
 
 irc_client::~irc_client(void)
@@ -23,6 +23,16 @@ void	irc_client::set_fd(int fd)
 int	irc_client::get_fd(void)
 {
 	return (this->fd);
+}
+
+int	irc_client::get_auth(void)
+{
+	return (this->authenticated);
+}
+
+std::string	irc_client::get_nick(void)
+{
+	return (this->nick);
 }
 
 void	irc_client::exec_cmd(void)

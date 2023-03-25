@@ -9,12 +9,14 @@ private:
 	int			fd;
 	std::string	buffer;
 	std::string	nick;
-	bool		authenticated;
+	int			authenticated;
 public:
 				irc_client(void);
 	std::string	&buff(void);
 	void		set_fd(int fd);
 	int			get_fd(void);
+	int			get_auth(void);
+	std::string	get_nick(void);
 	void		exec_cmd(void);
 	void		PASS(std::string args);
 	void		NICK(std::string args);
