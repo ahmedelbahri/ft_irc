@@ -1,8 +1,9 @@
 #include "./includes/ft_irc.hpp"
 
-pollfd			poll_fd[MAX_QUEUE];
-socklen_t		addr_len = sizeof(struct sockaddr_in);
-int				pollfd_size = 1;
+pollfd						poll_fd[MAX_QUEUE];
+socklen_t					addr_len = sizeof(struct sockaddr_in);
+int							pollfd_size = 1;
+std::map<int, irc_client>	clients;
 
 int main (int ac, char **av)
 {
@@ -18,9 +19,9 @@ int main (int ac, char **av)
 	poll_fd[0].fd = server.fd();
 	poll_fd[0].events = POLLIN;
 
+	std::cout << "waiting on port " << server.get_port() << std::endl;
 	while (true)
 	{
-		// std::cout << "waiting on port " << server.get_port() << std::endl;
 		if ((activity = poll(poll_fd, pollfd_size, timeout)) == -1) // poll
 			error("poll() failed.");
 		if (activity == 0)
@@ -28,6 +29,7 @@ int main (int ac, char **av)
 
 		server.check_pollable_discriptors(pollfd_size);
 		server.remove_closed_discriptors(pollfd_size);
+		check_cmd();
 	}
 	return (0);
 }

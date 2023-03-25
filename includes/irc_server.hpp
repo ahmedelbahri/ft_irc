@@ -3,20 +3,8 @@
 
 #define MAX_QUEUE 20
 
-#include <iostream>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <poll.h>
-#include <cstdlib>
-#include <signal.h>
-
-extern pollfd			poll_fd[MAX_QUEUE];
-extern socklen_t		addr_len;
-extern int				pollfd_size;
+#include "ft_irc.hpp"
+#include "irc_client.hpp"
 
 class irc_server
 {

@@ -72,7 +72,9 @@ void	irc_server::remove_closed_discriptors(int &pollfd_size)
 
 void	irc_server::fd_is_socket(int &pollfd_size)
 {
-	int	client_fd = 0;
+	int			client_fd = 0;
+	irc_client	client;
+
 	while (client_fd != -1)
 	{
 		if ((client_fd = accept(this->sock_fd, (struct sockaddr *)&(this->addr), &addr_len)) < 0
@@ -84,6 +86,7 @@ void	irc_server::fd_is_socket(int &pollfd_size)
 			poll_fd[pollfd_size].fd = client_fd;
 			poll_fd[pollfd_size].events = POLLIN;
 			pollfd_size++;
+			clients[client_fd] = client;
 		}
 		else if (client_fd > 0)
 			std::cout << "Connection refused." << std::endl, close(client_fd);
@@ -92,9 +95,9 @@ void	irc_server::fd_is_socket(int &pollfd_size)
 
 void	irc_server::fd_is_client(int i)
 {
-	int		len;
-	char	buffer[1024];
-	std::cout << "client " << poll_fd[i].fd <<  " " << i << " sent a message." << std::endl;
+	int			len;
+	char		buffer[1024];
+	std::cout << "client " << poll_fd[i].fd << " " << i << " sent a message." << std::endl;
 	while (true)
 	{
 		memset(buffer, 0, 1024);
@@ -104,7 +107,7 @@ void	irc_server::fd_is_client(int i)
 				std::cerr << "Error: recv() failed whith error number: " << errno << std::endl;
 			break;
 		}
-		std::cout << "message received: " << buffer << std::endl;
+		(clients[poll_fd[i].fd].buff()).append(buffer);
 	}
 }
 
@@ -120,6 +123,7 @@ void	irc_server::check_pollable_discriptors(int &pollfd_size)
 		{
 			std::cout << "client " << poll_fd[i].fd << " disconnected." << std::endl;
 			close(poll_fd[i].fd);
+			clients.erase(poll_fd[i].fd);
 			poll_fd[i].fd = -1;
 			check_poll_fd = true;
 			continue;
