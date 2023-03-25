@@ -8,6 +8,7 @@ void	check_cmd(void)
 		if (it->second.buff()[it->second.buff().size() - 1] == '\n')
 		{
 			std::cout << "cmd = " << it->second.buff() << std::endl;
+			it->second.exec_cmd();
 			it->second.buff().clear();
 		}
 	}

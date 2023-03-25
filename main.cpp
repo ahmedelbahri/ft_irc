@@ -3,11 +3,14 @@
 pollfd						poll_fd[MAX_QUEUE];
 socklen_t					addr_len = sizeof(struct sockaddr_in);
 int							pollfd_size = 1;
+irc_server					server;
 std::map<int, irc_client>	clients;
+
 
 int main (int ac, char **av)
 {
-	irc_server	server(ft_check(ac, av), av[2]);
+	server.set_server(ft_check(ac, av), av[2]);
+
 	int			timeout = (3 * 60 * 1000); // in the following order: minutes, seconds, milliseconds
 	int			activity;
 

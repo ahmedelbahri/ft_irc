@@ -1,9 +1,13 @@
 #include "../includes/ft_irc.hpp"
 
-irc_server::irc_server(int port, std::string password)
+irc_server::irc_server(void)
+{
+	this->dummy = 1;
+	return;
+}
+void	irc_server::set_server(int port, std::string password)
 {
 	this->port = port;
-	this->dummy = 1;
 	this->password = password;
 	return;
 }
@@ -22,11 +26,6 @@ int	irc_server::fd(void)
 int	irc_server::get_port(void)
 {
 	return (this->port);
-}
-
-irc_server::~irc_server()
-{
-	return;
 }
 
 void	irc_server::init_server(void)
@@ -86,6 +85,7 @@ void	irc_server::fd_is_socket(int &pollfd_size)
 			poll_fd[pollfd_size].fd = client_fd;
 			poll_fd[pollfd_size].events = POLLIN;
 			pollfd_size++;
+			client.set_fd(client_fd);
 			clients[client_fd] = client;
 		}
 		else if (client_fd > 0)
@@ -135,4 +135,14 @@ void	irc_server::check_pollable_discriptors(int &pollfd_size)
 		else
 			this->fd_is_client(i);
 	}
+}
+
+std::string	irc_server::get_pass(void)
+{
+	return (this->password);
+}
+
+irc_server::~irc_server()
+{
+	return;
 }
