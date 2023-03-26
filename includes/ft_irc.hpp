@@ -11,6 +11,7 @@
 #include <poll.h>
 #include <cstdlib>
 #include <signal.h>
+#include <vector>
 #include <map>
 
 #include "irc_server.hpp"

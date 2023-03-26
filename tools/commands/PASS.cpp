@@ -2,8 +2,6 @@
 
 void	irc_client::PASS(std::string args)
 {
-	if (args[args.size() - 1] == '\n')
-		args.erase(args.find_last_of("\n"), args.size());
 	std::cout << this->fd << std::endl;
 	std::cout << "|" << args << "|" << std::endl;
 	if (args.empty())
