@@ -44,7 +44,7 @@ std::string	irc_client::msg_auth()
 					":ahel-bid 372 " + this->nick + " 🔨 welcome to ahel-bid 🔨\r\n"
 					":ahel-bid 376 " + this->nick + " :End of /MOTD command\r\n");
 }
-//-----hiyedt wahed else kunti dayerha qbel if dial pass ma3reftch lach zedtiha kanet mkhesra lkhedma---------//
+
 void	irc_client::exec_cmd(void)
 {
 	int len = this->buffer.find_first_of(" \n");

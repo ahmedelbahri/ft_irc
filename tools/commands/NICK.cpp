@@ -15,14 +15,14 @@ int	check_if_nick_used(std::string arg)
 
 void	irc_client::NICK(std::string args)
 {
-	if (args.empty())
+	if (args.empty() || (int)args.find_first_not_of(" \t\v\f\r") < 0)
 		send_error(this->fd, ERR_NONICKNAMEGIVEN);
 	else if (!this->authenticated)
 		send_error(this->fd, ERR_NICKBEFOREPASS);
 	else if (!check_if_nick_used(args))
 	{
 		this->nick = args;
-		if (this->username[0])
+		if (!this->username.empty())
 		{
 			send(this->fd, this->msg_auth().c_str(), this->msg_auth().size(), 0);
 			this->authenticated = 2;
