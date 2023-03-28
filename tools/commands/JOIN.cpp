@@ -51,7 +51,12 @@ void	create_channels(std::map<std::string, std::string> new_channels, int fd)
 				channels[it->first].add_member(fd);
 		}
 		else
+		{
+			if (std::find(channels[it->first].get_members().begin(), channels[it->first].get_members().end(), fd) == channels[it->first].get_members().end())
 				channels[it->first].add_member(fd);
+			else
+				send_error(fd, ":" + clients[fd].get_nick() + " 443 :you are already on channel\n");
+		}
 }
 
 void	irc_client::JOIN(std::string args)

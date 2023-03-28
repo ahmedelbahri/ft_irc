@@ -50,7 +50,7 @@ void	irc_client::exec_cmd(void)
 	int len = this->buffer.find_first_of(" \n");
 	std::string	cmd = this->buffer.substr(0, len);
 	std::string	args = this->buffer.substr(len + 1, this->buffer.size());
-	std::cout << len << "|" << cmd << "|" << args << "|" << std::endl;
+	// std::cout << len << "|" << cmd << "|" << args << "|" << std::endl;
 	if (args.size() > 0 && args[args.size() - 1] == '\n')
 		args.erase(args.find_last_of("\n"), args.size());
 	if (cmd == "PASS")
@@ -59,9 +59,9 @@ void	irc_client::exec_cmd(void)
 		this->NICK(args);
 	else if (cmd == "USER")
 		this->USER(args);
-	else if (cmd == "JOIN" && this->authenticated == 2) // authenticate
+	else if (cmd == "JOIN") // authenticate
 		this->JOIN(args);
-	else if (cmd == "PART" && this->authenticated == 2) // authenticate
+	else if (cmd == "PART") // authenticate
 		this->PART(args);
 }
 

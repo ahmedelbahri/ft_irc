@@ -97,7 +97,7 @@ void	irc_server::fd_is_client(int i)
 {
 	int			len;
 	char		buffer[1024];
-	std::cout << "client " << poll_fd[i].fd << " " << i << " sent a message." << std::endl;
+	// std::cout << "client " << poll_fd[i].fd << " " << i << " sent a message." << std::endl;
 	while (true)
 	{
 		memset(buffer, 0, 1024);
