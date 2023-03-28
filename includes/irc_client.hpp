@@ -23,6 +23,8 @@ public:
 	void		PASS(std::string args);
 	void		NICK(std::string args);
 	void		USER(std::string args);
+	void		JOIN(std::string args);
+	void		PART(std::string args);
 				~irc_client(void);
 };
 

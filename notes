@@ -1,2 +1,8 @@
-NICK rah qaditha tateste mzn wchuf ida kanet chi haja khaseha ttzad 
 tester segfault
+JOIN : if channel does not exist create it
+        else if exist && public join it
+        else if exist && private check password
+        else if exist && private check if user  if yes join it
+PART: if channel exist && user in this channel part it
+        else if channel exist && user not in this channel send error
+        else if channel does not exist send error

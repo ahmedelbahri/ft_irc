@@ -13,9 +13,11 @@
 #include <signal.h>
 #include <vector>
 #include <map>
+#include <utility>
 
 #include "irc_server.hpp"
 #include "irc_client.hpp"
+#include "irc_channel.hpp"
 
 /* PASS Errors */
 #define ERR_NEEDMOREPARAMS(command)	"461 * "command": Not enough parameters\n"
@@ -28,13 +30,15 @@
 #define ERR_NICKNAMEINUSE(nick)		"433 * "nick" :Nickname is already in use\n"
 
 
-class								irc_client;
-class								irc_server;
-extern pollfd						poll_fd[MAX_QUEUE];
-extern socklen_t					addr_len;
-extern int							pollfd_size;
-extern irc_server					server;
-extern std::map<int, irc_client>	clients;
+class										irc_client;
+class										irc_server;
+class										irc_channel;
+extern pollfd								poll_fd[MAX_QUEUE];
+extern socklen_t							addr_len;
+extern int									pollfd_size;
+extern irc_server							server;
+extern std::map<std::string, irc_channel>	channels;
+extern std::map<int, irc_client>			clients;
 
 void	send_error(int fd, std::string message);
 void	error(std::string str, int code = 0);

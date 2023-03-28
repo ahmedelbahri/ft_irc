@@ -6,7 +6,7 @@ CPP = main.cpp\
 	./tools/send_error.cpp\
 \
 	./tools/commands/PASS.cpp ./tools/commands/NICK.cpp ./tools/commands/USER.cpp\
-	./tools/commands/JOIN.cpp
+	./tools/commands/JOIN.cpp ./tools/commands/PART.cpp
 HPP = ./includes/irc_client.hpp ./includes/irc_server.hpp ./includes/ft_irc.hpp ./includes/irc_channel.hpp
 OBJ = $(CPP:.cpp=.o)
 CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -fsanitize=address

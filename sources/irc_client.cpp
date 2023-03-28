@@ -59,5 +59,9 @@ void	irc_client::exec_cmd(void)
 		this->NICK(args);
 	else if (cmd == "USER")
 		this->USER(args);
+	else if (cmd == "JOIN" && this->authenticated == 2) // authenticate
+		this->JOIN(args);
+	else if (cmd == "PART" && this->authenticated == 2) // authenticate
+		this->PART(args);
 }
 

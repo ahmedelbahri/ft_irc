@@ -6,15 +6,17 @@
 #include "ft_irc.hpp"
 #include "irc_client.hpp"
 
+class irc_channel;
 class irc_server
 {
 private:
-	int					dummy; // tan3arfoh o nsemiwh
-	int					port;
-	std::string			password;
-	int					sock_fd;
-	struct sockaddr_in	addr;
-	bool				check_poll_fd;
+	int							dummy; // tan3arfoh o nsemiwh
+	int							port;
+	std::string					password;
+	int							sock_fd;
+	struct sockaddr_in			addr;
+	bool						check_poll_fd;
+	std::vector<irc_channel>	channels;
 public:
 						irc_server(void);
 	int					set_fd(int socket_fd);

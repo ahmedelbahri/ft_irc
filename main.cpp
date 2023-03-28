@@ -1,10 +1,11 @@
 #include "./includes/ft_irc.hpp"
 
-pollfd						poll_fd[MAX_QUEUE];
-socklen_t					addr_len = sizeof(struct sockaddr_in);
-int							pollfd_size = 1;
-irc_server					server;
-std::map<int, irc_client>	clients;
+pollfd								poll_fd[MAX_QUEUE];
+socklen_t							addr_len = sizeof(struct sockaddr_in);
+int									pollfd_size = 1;
+irc_server							server;
+std::map<std::string, irc_channel>	channels;
+std::map<int, irc_client>			clients;
 
 
 int main (int ac, char **av)
@@ -33,6 +34,14 @@ int main (int ac, char **av)
 		server.check_pollable_discriptors(pollfd_size);
 		server.remove_closed_discriptors(pollfd_size);
 		check_cmd();
+		for (std::map<std::string, irc_channel>::iterator it = channels.begin(); it != channels.end(); it++)
+		{
+			// std::cout << it->first<< std::endl;
+			std::cout << "name" << it->second.get_name() << std::endl;
+			std::cout << it->second.get_mode() << std::endl;
+			std::cout << it->second.get_opp() << std::endl;
+			std::cout << it->second.get_pass() << std::endl;
+		}
 	}
 	return (0);
 }
