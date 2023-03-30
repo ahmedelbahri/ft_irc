@@ -2,8 +2,8 @@
 
 void	irc_client::PASS(std::string args)
 {
-	std::cout << this->fd << std::endl;
-	std::cout << "|" << args << "|" << std::endl;
+	// std::cout << "client fd: " << this->fd << std::endl;
+	// std::cout << "|test" << args << "|" << args << std::endl;
 	if (args.empty())
 		send_error(this->fd, ERR_NEEDMOREPARAMS("PASS"));
 	else if (this->authenticated)

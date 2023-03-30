@@ -1,72 +1,101 @@
 #include "../../includes/ft_irc.hpp"
 
-static int	asign(std::string arg, std::map<std::string, std::string> &new_channels)
+void	get_arr(std::string str, std::vector<std::string> &arr)
 {
-	arg = arg.substr(arg.find_first_not_of(" "), arg.find_last_not_of(" ") + 1);
-	if (arg[0] == '#' && (int)arg.find(" ") < 0)
-		new_channels[arg] = "";
-	else if (arg[0] == '&' && (int)arg.find(" ") > 0 && arg[1] != ' ')
+	int i = 0;
+	str = str.substr(str.find_first_not_of(" "), str.length());
+	str = str.substr(0, str.find_last_not_of(" ") + 1);
+	std::cout << "get_arr" << "|" << str << "|" << std::endl;
+	if ((int)str.find(" ") >= 0)
+		return (std::cout << "error key should not have ' '" << std::endl, void()); 
+	while (str[i])
 	{
-		arg = arg.substr(arg.find_first_not_of(" "), arg.size());
-		std::string	chen = arg.substr(0, arg.find(" "));
-		new_channels[chen] = arg.substr(arg.find_first_not_of(" ", chen.size()), arg.find_last_not_of(" ") + 1);
+		if (str[i] == ',' && str[i + 1] == '\0')
+			return (std::cout << "error key should not have ', '" << std::endl, void());
+		if (str[i] == ',')
+		{
+			arr.push_back(str.substr(0, i));
+			str = str.substr(i + 1, str.length());
+			i = 0;
+		}
+		i++;
 	}
-	else
-		return (1);
-	return (0);
+	arr.push_back(str);
 }
 
-static void	split_args(std::string args, std::map<std::string, std::string> &new_channels, irc_client client)
+void	split_args(std::string args, std::map<std::string, std::string> &new_channels, irc_client client)
 {
-	int len;
-	while ((len = args.find_first_of(",")) > 0)
+	std::vector<std::string>	channels;
+	std::vector<std::string>	keys;
+
+	args = args.substr(args.find_first_not_of(" "), args.length());
+	args = args.substr(0, args.find_last_not_of(" ") + 1);
+	get_arr(args.substr(0, args.find_first_of(" ")), channels);
+	get_arr(args.substr(args.find_first_of(" "), args.size()), keys);
+	if (channels.size() != keys.size())
+		return (send_error(client.get_fd(), ":" + client.get_nick() + "463 JOIN : each channel should have a key\n"), void());
+	std::vector<std::string>::iterator it2, it = keys.begin();
+	for (it = channels.begin(); it != channels.end(); it++)
 	{
-		if (asign(args.substr(0, len), new_channels))
-			send_error(client.get_fd(), ":" + client.get_nick() + " 407 JOIN :\
-public channel has no pass && private should have pass\n");
-		args = args.substr(len + 1, args.size());
+		new_channels.insert(std::pair<std::string, std::string>(*it, *it2));
+		it2++;
 	}
-	if (!args.empty()) // && (int)args.find_first_not_of(" ") > 0
-		if (asign(args, new_channels))
-			send_error(client.get_fd(), ":" + client.get_nick() + " 407 JOIN :\
-public channel has no pass && private should have pass\n");
 }
 
-void	create_channels(std::map<std::string, std::string> new_channels, int fd)
+bool	isElementInVector(const std::vector<int>& vec, int elem) {
+	for (std::vector<int>::const_iterator it = vec.begin(); it != vec.end(); ++it)
+		if (*it == elem)
+			return true;
+	return false;
+}
+
+void	send_msg(int fd, std::string msg)
+{
+	msg = msg + "\r\n";
+	send(fd, msg.c_str(), msg.size(), 0);
+}
+
+void	create_channels(std::map<std::string, std::string> new_channels,irc_client client)
 {
 	std::map<std::string, std::string>::iterator	it;
 	for (it = new_channels.begin(); it != new_channels.end(); it++)
-		if (channels.insert(std::pair<std::string, irc_channel>(it->first, irc_channel(it, fd))).second)
+	{
+		if (it->first[0] != '#' && it->first[0] != '&')
+			return (send_error(client.get_fd(), ":" + client.get_nick() + "460 JOIN : private channel begin with '&' and public with '#'\n"), void());
+		if (channels[it->first].get_members().empty())
+			channels.erase(it->first);
+		channels.insert(std::pair<std::string, irc_channel>(it->first, irc_channel(it, client.get_fd())));
+		if (isElementInVector(channels[it->first].get_members(), client.get_fd()))
+			(send_msg(client.get_fd(), ": 443 * " + clients[client.get_fd()].get_nick() + " " + it->first + " :is already on channel"), 0);
+		else
 		{
 			if (channels[it->first].get_mode())
 			{
-				if (std::find(channels[it->first].get_invites().begin(), channels[it->first].get_invites().end(), fd) != channels[it->first].get_invites().end())
-					channels[it->first].add_member(fd);
-				else if (channels[it->first].get_pass() == it->second)
-					channels[it->first].add_member(fd);
+				if (isElementInVector(channels[it->first].get_invites(), client.get_fd()))
+					if (channels[it->first].get_pass() == it->second)
+						channels[it->first].add_member(client.get_fd());
+					else
+						send_error(client.get_fd(), ":" + clients[client.get_fd()].get_nick() + "475 " + it->first + " :Cannot join channel password error (+k)\n");
 				else
-					send_error(fd, ":" + clients[fd].get_nick() + " 475 " + it->first + " :Cannot join channel (+k)\n");
+					send_error(client.get_fd(), ":" + clients[client.get_fd()].get_nick() + "475 " + it->first + " :Cannot join channel you should be invited (+i)\n");
 			}
+			else if (!channels[it->first].get_mode() && channels[it->first].get_pass() == it->second)
+				channels[it->first].add_member(client.get_fd());
 			else
-				channels[it->first].add_member(fd);
+				send_error(client.get_fd(), ":" + clients[client.get_fd()].get_nick() + " 475 " + it->first + " :Cannot join channel (+k)\n");
 		}
-		else
-		{
-			if (std::find(channels[it->first].get_members().begin(), channels[it->first].get_members().end(), fd) == channels[it->first].get_members().end())
-				channels[it->first].add_member(fd);
-			else
-				send_error(fd, ":" + clients[fd].get_nick() + " 443 :you are already on channel\n");
-		}
+	}
 }
+
 
 void	irc_client::JOIN(std::string args)
 {
 	std::map<std::string, std::string>	new_channels;
-	if (args.empty() || (int)args.find_first_not_of(" \t\v\f\r") < 0)
+	if (args.empty() || (int)args.find_first_not_of(" \t\v\f\r") < 0 || (int)args.find(" ") < 0)
 		send_error(this->fd, ":" + this->nick + "461 JOIN :Not enough parameters\n");
 	else
 	{
 		split_args(args, new_channels, *this);
-		create_channels(new_channels, this->fd);
+		create_channels(new_channels, *this);
 	}
 }

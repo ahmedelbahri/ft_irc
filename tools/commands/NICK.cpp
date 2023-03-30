@@ -3,13 +3,12 @@
 int	check_if_nick_used(std::string arg)
 {
 	std::map<int, irc_client>::iterator	it;
+
 	for (it = clients.begin(); it != clients.end(); it++)
-	{
 		if (it->second.get_auth() == 2 && it->second.get_nick() == arg)
 			return (1);
 		else if (it->second.get_auth() == 1 && it->second.get_nick() == arg)
 			return (2);
-	}
 	return (0);
 }
 

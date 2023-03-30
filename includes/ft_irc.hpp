@@ -45,5 +45,5 @@ void	error(std::string str, int code = 0);
 int		ft_check(int ac, char **av);
 void	sigint_handler(int sig);
 void	check_cmd(void);
-
+bool	isElementInVector(const std::vector<int>& vec, int elem);
 #endif

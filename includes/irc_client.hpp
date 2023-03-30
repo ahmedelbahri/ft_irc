@@ -25,6 +25,8 @@ public:
 	void		USER(std::string args);
 	void		JOIN(std::string args);
 	void		PART(std::string args);
+	void		INVITE(std::string args);
+	void		MODE(std::string args);
 				~irc_client(void);
 };
 
