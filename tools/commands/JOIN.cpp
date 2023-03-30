@@ -34,8 +34,8 @@ void	split_args(std::string args, std::map<std::string, std::string> &new_channe
 	get_arr(args.substr(args.find_first_of(" "), args.size()), keys);
 	if (channels.size() != keys.size())
 		return (send_error(client.get_fd(), ":" + client.get_nick() + "463 JOIN : each channel should have a key\n"), void());
-	std::vector<std::string>::iterator it2, it = keys.begin();
-	for (it = channels.begin(); it != channels.end(); it++)
+	std::vector<std::string>::iterator it2 = keys.begin();
+	for (std::vector<std::string>::iterator it = channels.begin(); it != channels.end(); it++)
 	{
 		new_channels.insert(std::pair<std::string, std::string>(*it, *it2));
 		it2++;
@@ -71,7 +71,9 @@ void	create_channels(std::map<std::string, std::string> new_channels,irc_client 
 		{
 			if (channels[it->first].get_mode())
 			{
-				if (isElementInVector(channels[it->first].get_invites(), client.get_fd()))
+				if (channels[it->first].get_members().empty())
+					channels[it->first].add_member(client.get_fd());
+				else if (isElementInVector(channels[it->first].get_invites(), client.get_fd()))
 					if (channels[it->first].get_pass() == it->second)
 						channels[it->first].add_member(client.get_fd());
 					else
@@ -79,8 +81,11 @@ void	create_channels(std::map<std::string, std::string> new_channels,irc_client 
 				else
 					send_error(client.get_fd(), ":" + clients[client.get_fd()].get_nick() + "475 " + it->first + " :Cannot join channel you should be invited (+i)\n");
 			}
-			else if (!channels[it->first].get_mode() && channels[it->first].get_pass() == it->second)
-				channels[it->first].add_member(client.get_fd());
+			else if (!channels[it->first].get_mode())
+				if (channels[it->first].get_pass() == it->second)
+					channels[it->first].add_member(client.get_fd());
+				else
+					send_error(client.get_fd(), ":" + clients[client.get_fd()].get_nick() + "475 " + it->first + " :Cannot join channel password error (+k)\n");
 			else
 				send_error(client.get_fd(), ":" + clients[client.get_fd()].get_nick() + " 475 " + it->first + " :Cannot join channel (+k)\n");
 		}
