@@ -44,6 +44,11 @@ std::vector<int>	&irc_channel::get_members()
 	return (this->members);
 }
 
+std::string	&irc_channel::get_topic()
+{
+	return (this->topic);
+}
+
 void	irc_channel::inform_members(std::string msg, int fd)
 {
 	for (std::vector<int>::iterator it = this->members.begin(); it != this->members.end(); it++)
@@ -55,7 +60,7 @@ void	irc_channel::add_member(int fd)
 {
 	this->members.push_back(fd);
 	inform_members(":" + clients[fd].get_nick() + " JOIN " + this->name + "\n", fd);
-	send_error(fd, ":" + clients[fd].get_nick() + " 332 JOIN :" + (this->topic.empty() ? "No topic\n" : this->topic + "\n"));
+	send_error(fd, ":" + clients[fd].get_nick() + " 332 JOIN :" + (this->topic.empty() ? "No topic is set\n" : this->topic + "\n"));
 }
 
 irc_channel::~irc_channel()

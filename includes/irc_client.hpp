@@ -28,6 +28,7 @@ public:
 	void		INVITE(std::string args);
 	void		MODE(std::string args);
 	void		KICK(std::string args);
+	void		TOPIC(std::string args);
 				~irc_client(void);
 };
 

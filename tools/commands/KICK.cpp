@@ -11,10 +11,10 @@ bool	check_if_user_in_channel(int user, std::string chan)
 void	irc_client::KICK(std::string args)
 {
 	if (args.empty() || (int)args.find_first_not_of(" \t\v\f\r") < 0)
-		send_error(this->fd, ":" + this->nick + " 461 INVITE :Not enough parameters\n");
+		send_error(this->fd, ":" + this->nick + " 461 KICK :Not enough parameters\n");
 	else
 		if ((int)args.find(" ") <= 0)
-			send_error(this->fd, ":" + this->nick + " 461 INVITE :Not enough parameters\n");
+			send_error(this->fd, ":" + this->nick + " 461 KICK :Not enough parameters\n");
 		else
 		{
 			std::string	nick = args.substr(0, args.find(" "));

@@ -74,5 +74,7 @@ void	irc_client::exec_cmd(void)
 		this->MODE(args);
 	else if (cmd == "KICK") // authenticate
 		this->KICK(args);
+	else if (cmd == "TOPIC") // authenticate
+		this->TOPIC(args);
 }
 

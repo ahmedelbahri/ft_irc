@@ -20,6 +20,7 @@ public:
 	int					get_opp();
 	std::string			get_name();
 	std::string			get_pass();
+	std::string			&get_topic();
 	std::vector<int>	&get_invites();
 	std::vector<int>	&get_members();
 	void				add_member(int fd);
