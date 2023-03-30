@@ -11,17 +11,12 @@ irc_channel::irc_channel(std::map<std::string, std::string>::iterator channel, i
 	this->name = channel->first;
 	this->name[0] == '#' ? this->PRIVATE = false : this->PRIVATE = true;
 	this->pass = channel->second;
-	this->opp = fd;
+	opp.push_back(fd);
 }
 
 bool	irc_channel::get_mode()
 {
 	return (this->PRIVATE);
-}
-
-int	irc_channel::get_opp()
-{
-	return (opp);
 }
 
 std::string	irc_channel::get_name()
@@ -32,6 +27,11 @@ std::string	irc_channel::get_name()
 std::string	irc_channel::get_pass()
 {
 	return (pass);
+}
+
+std::vector<int>	&irc_channel::get_opp()
+{
+	return (opp);
 }
 
 std::vector<int>	&irc_channel::get_invites()

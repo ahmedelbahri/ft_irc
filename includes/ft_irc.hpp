@@ -48,5 +48,7 @@ void	check_cmd(void);
 bool	isElementInVector(const std::vector<int>& vec, int elem);
 int		check_if_user_exist(std::string nick);
 void	eraseElementFromVector(std::vector<int>& vec, int elem);
+bool				check_if_user_in_channel(int user, std::string chan);
+int	check_if_user_exist(std::string nick);
 
 #endif

@@ -21,7 +21,7 @@ void	irc_client::INVITE(std::string args)
 			std::string	chan = args.substr(args.find_first_not_of(" ", nick.size()), args.find_last_not_of(" ") + 1);
 			if (channels.find(chan) == channels.end())
 				send_error(this->fd, ":" + this->nick + " 403 " + chan + " :No such channel\n");
-			else if (channels[chan].get_opp() != this->fd)
+			else if (!isElementInVector(channels[chan].get_opp() , this->fd))
 				send_error(this->fd, ":" + this->nick + " 482 " + chan + " :You're not channel operator\n");
 			else if (check_if_user_exist(nick) == -1)
 				send_error(this->fd, ":" + this->nick + " 401 " + nick + " :No such nick\n");
