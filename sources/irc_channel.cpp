@@ -2,11 +2,12 @@
 
 irc_channel::irc_channel()
 {
+	this->topic = "";
 	return;
 }
 irc_channel::irc_channel(std::map<std::string, std::string>::iterator channel, int fd)
 {
-	// std::cout << "channel created "<< channel->first << " " << channel->second << std::endl;
+	this->topic = "";
 	this->name = channel->first;
 	this->name[0] == '#' ? this->PRIVATE = false : this->PRIVATE = true;
 	this->pass = channel->second;
@@ -53,9 +54,8 @@ void	irc_channel::inform_members(std::string msg, int fd)
 void	irc_channel::add_member(int fd)
 {
 	this->members.push_back(fd);
-	this->opp = fd;
 	inform_members(":" + clients[fd].get_nick() + " JOIN " + this->name + "\n", fd);
-	send_error(fd, ":" + clients[fd].get_nick() + " 332 JOIN :No topic\n");
+	send_error(fd, ":" + clients[fd].get_nick() + " 332 JOIN :" + (this->topic.empty() ? "No topic\n" : this->topic + "\n"));
 }
 
 irc_channel::~irc_channel()

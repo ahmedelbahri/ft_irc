@@ -10,7 +10,7 @@ private:
 	std::string			name;
 	std::string			topic;
 	std::string			pass;
-	int			opp;
+	int					opp;
 	std::vector<int>	members;
 	std::vector<int>	invites;
 public:

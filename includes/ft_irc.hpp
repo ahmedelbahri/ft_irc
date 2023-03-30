@@ -46,4 +46,7 @@ int		ft_check(int ac, char **av);
 void	sigint_handler(int sig);
 void	check_cmd(void);
 bool	isElementInVector(const std::vector<int>& vec, int elem);
+int		check_if_user_exist(std::string nick);
+void	eraseElementFromVector(std::vector<int>& vec, int elem);
+
 #endif
