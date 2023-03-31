@@ -57,7 +57,7 @@ void	irc_client::exec_cmd(void)
 		else
 			break;
 	}
-	std::cout << "cmd: |" << cmd << "| args: |" << args << "|" << std::endl;
+	// std::cout << "cmd: |" << cmd << "| args: |" << args << "|" << std::endl;
 	if (cmd == "PASS")
 		this->PASS(args);
 	else if (cmd == "NICK")
@@ -76,5 +76,7 @@ void	irc_client::exec_cmd(void)
 		this->KICK(args);
 	else if (cmd == "TOPIC") // authenticate
 		this->TOPIC(args);
+	else if (cmd == "PRIVMSG") // authenticate
+		this->PRIVMSG(args);
 }
 
