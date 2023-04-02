@@ -45,11 +45,23 @@ std::string	irc_client::msg_auth()
 			":ahel-bid 376 " + this->nick + " :End of /MOTD command\r\n");
 }
 
+// std::string	irc_client::chan_verif()
+// {
+// 	return (":Rαɠɳαɾöƙ 001 " + server.clients[index]->nick + " : welcome to the internet relay chat\r\n"
+// 			":Rαɠɳαɾöƙ 002 " + server.clients[index]->nick + " :Your host is Rαɠɳαɾöƙ, running version 1.0\r\n"
+// 			":Rαɠɳαɾöƙ 003 " + server.clients[index]->nick + " :This server was created 28/12/2022\r\n"
+// 			":Rαɠɳαɾöƙ 004 " + server.clients[index]->nick + " Rαɠɳαɾöƙ 1.0 - -\r\n"
+// 			":Rαɠɳαɾöƙ 372 " + server.clients[index]->nick + " 🔨 𝔚𝔢𝔩𝔠𝔬𝔪𝔢 𝔗𝔬 Rαɠɳαɾöƙ 🔨\r\n"
+// 			":Rαɠɳαɾöƙ 376 " + server.clients[index]->nick + " :End of /MOTD command\r\n");
+// }
+
 void	irc_client::exec_cmd(void)
 {
 	int len = this->buffer.find_first_of(" \n");
 	std::string	cmd = this->buffer.substr(0, len);
 	std::string	args = this->buffer.substr(len + 1, this->buffer.length());
+	if (args[0] == ':')
+		args.erase(0, 1);
 	for (int i = args.length() - 1; i >= 0; i--)
 	{
 		if (args[i] == '\n' || (int)args[i] == 13)
@@ -57,7 +69,7 @@ void	irc_client::exec_cmd(void)
 		else
 			break;
 	}
-	// std::cout << "cmd: |" << cmd << "| args: |" << args << "|" << std::endl;
+	std::cout << "cmd: |" << cmd << "| args: |" << args << "|" << std::endl;
 	if (cmd == "PASS")
 		this->PASS(args);
 	else if (cmd == "NICK")
