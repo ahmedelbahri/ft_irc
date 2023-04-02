@@ -25,10 +25,12 @@ void	irc_client::INVITE(std::string args)
 				send_error(this->fd, ":" + this->nick + " 482 " + chan + " :You're not channel operator\n");
 			else if (check_if_user_exist(nick) == -1)
 				send_error(this->fd, ":" + this->nick + " 401 " + nick + " :No such nick\n");
+			else if (isElementInVector(channels[chan].get_members(), check_if_user_exist(nick)))
+				send_error(this->fd, ":" + this->nick + " 443 " + nick + " " + chan + " :is already on channel\n");
 			else
 			{
-				send_error(check_if_user_exist(nick), ":" + this->nick + " INVITE you to" + chan + "\n");
-				send_error(this->fd, ": 341 you invited " + this->nick + "to" + chan + "\n");
+				send_error(check_if_user_exist(nick), ":" + this->nick + " INVITE you to " + chan + "\n");
+				send_error(this->fd, ": 341 you invited " + this->nick + " to " + chan + "\n");
 				channels[chan].get_invites().push_back(check_if_user_exist(nick));
 			}
 		}
