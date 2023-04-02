@@ -1,0 +1,25 @@
+NOTES:
+		JOIN : if channel does not exist create it
+				else if exist && public join it
+				else if exist && private check password
+				else if exist && private check if user  if yes join it
+		PART: if channel exist && user in this channel part it
+				else if channel exist && user not in this channel send error
+				else if channel does not exist send error
+
+TO_DO :
+		operator commands : KICK: Eject a client from the channel
+							MODE: Change the channels modes
+							INVITE: Invite a client to an invite-only channel (mode +i)
+							TOPIC: Change the channel topic in a mode +t channel
+		add if a client ^C or quit, his fd should be removed from all vectors
+		if an operator quits or ^C, there channels should check if there is other operators if not git opperator access to the first user in the channel
+		tester segfault
+		PRIVMSG handle PRIVMSG "as 	" "as "
+
+progress:
+		INVITE PART JOIN KICK TOPIC testehum ida makhedmatch chi haja ghe9iyedha tatwerriha li 
+		PRIVMSG bditha ms baqi fiha mayedar blach matesteha
+		madam channel wehda iqder ikkun 3endha + qu'un opperateur , attribute opp in class channel reditou vector
+		db hawel t9ad ghe dakchi flimechat tanhder 3la syntax dial msgs wdakchi
+		ida salitih 9ra 3la dik mod w9iyed douk lcases li ghadi ngerewhum
