@@ -57,9 +57,12 @@ std::string	irc_client::msg_auth()
 
 void	irc_client::exec_cmd(void)
 {
-	int len = this->buffer.find_first_of(" \n");
+	int len = this->buffer.find_first_of(" ");
+	// this->buffer.erase(remove(this->buffer.begin(), this->buffer.end(), '\r'), this->buffer.end()); // clear args form \r
 	std::string	cmd = this->buffer.substr(0, len);
-	std::string	args = this->buffer.substr(len + 1, this->buffer.length());
+	std::string	args = len > 0 ? this->buffer.substr(len + 1, this->buffer.length()) : "";
+	args = args.substr((int)args.find_first_not_of(ISSPACE) >= 0 ? (int)args.find_first_not_of(ISSPACE) : 0);
+	args = args.substr(0, args.find_last_not_of(ISSPACE) + 1);
 	if (args[0] == ':')
 		args.erase(0, 1);
 	for (int i = args.length() - 1; i >= 0; i--)

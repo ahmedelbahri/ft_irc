@@ -19,6 +19,8 @@
 #include "irc_client.hpp"
 #include "irc_channel.hpp"
 
+#define ISSPACE "\t\v\f "
+
 /* PASS Errors */
 #define ERR_NEEDMOREPARAMS(command)	"461 * "command": Not enough parameters\n"
 #define ERR_ALREADYREGISTERED		"462 * ::You may not reregister\n"
