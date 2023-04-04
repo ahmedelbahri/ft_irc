@@ -10,15 +10,15 @@ int	check_if_user_exist(std::string nick)
 
 void	irc_client::INVITE(std::string args)
 {
-	if (args.empty() || (int)args.find_first_not_of(" \t\v\f\r") < 0)
+	if (args.empty())
 		send_error(this->fd, ":" + this->nick + " 461 INVITE :Not enough parameters\n");
 	else
-		if ((int)args.find(" ") < 0)
+		if ((int)args.find(ISSPACE) < 0)
 			send_error(this->fd, ":" + this->nick + " 461 INVITE :Not enough parameters\n");
 		else
 		{
-			std::string	nick = args.substr(0, args.find(" "));
-			std::string	chan = args.substr(args.find_first_not_of(" ", nick.size()), args.find_last_not_of(" ") + 1);
+			std::string	nick = args.substr(0, args.find_first_of(ISSPACE));
+			std::string	chan = args.substr(args.find_first_not_of(ISSPACE));
 			if (channels.find(chan) == channels.end())
 				send_error(this->fd, ":" + this->nick + " 403 " + chan + " :No such channel\n");
 			else if (!isElementInVector(channels[chan].get_opp() , this->fd))
