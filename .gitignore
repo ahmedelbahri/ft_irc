@@ -7,3 +7,4 @@ a.out*
 *.o
 *.out
 ircserv
+test.cpp
