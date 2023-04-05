@@ -6,7 +6,9 @@
 class irc_channel
 {
 private:
-	bool				PRIVATE;
+	bool				invite_only;
+	bool				topic_settable_by_op;
+	bool				messsage_from_non_member;
 	std::string			name;
 	std::string			topic;
 	std::string			pass;
@@ -16,7 +18,9 @@ private:
 public:
 						irc_channel();
 						irc_channel(std::map<std::string, std::string>::iterator channel, int fd);
-	bool				get_mode();
+	bool				&get_mode();
+	bool				&get_topic_settable_by_op();
+	bool				&get_message_from_non_member();
 	std::string			get_name();
 	std::string			get_pass();
 	std::string			&get_topic();

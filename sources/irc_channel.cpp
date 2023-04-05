@@ -9,14 +9,26 @@ irc_channel::irc_channel(std::map<std::string, std::string>::iterator channel, i
 {
 	this->topic = "";
 	this->name = channel->first;
-	this->name[0] == '#' ? this->PRIVATE = false : this->PRIVATE = true;
+	this->invite_only = false;
+	this->topic_settable_by_op = false;
+	this->topic_settable_by_op = false;
 	this->pass = channel->second;
 	opp.push_back(fd);
 }
 
-bool	irc_channel::get_mode()
+bool	&irc_channel::get_mode()
 {
-	return (this->PRIVATE);
+	return (this->invite_only);
+}
+
+bool	&irc_channel::get_topic_settable_by_op()
+{
+	return (this->topic_settable_by_op);
+}
+
+bool	&irc_channel::get_message_from_non_member()
+{
+	return (this->messsage_from_non_member);
 }
 
 std::string	irc_channel::get_name()

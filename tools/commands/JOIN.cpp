@@ -79,7 +79,7 @@ void	create_channels(std::map<std::string, std::string> new_channels,irc_client 
 					else
 						send_error(client.get_fd(), ":" + clients[client.get_fd()].get_nick() + "475 " + it->first + " :Cannot join channel password error (+k)\n");
 				else
-					send_error(client.get_fd(), ":" + clients[client.get_fd()].get_nick() + "475 " + it->first + " :Cannot join channel you should be invited (+i)\n");
+					send_error(client.get_fd(), ":" + clients[client.get_fd()].get_nick() + "473 " + it->first + " :Cannot join channel you should be invited (+i)\n");
 			}
 			else if (!channels[it->first].get_mode())
 				if (channels[it->first].get_pass() == it->second)
