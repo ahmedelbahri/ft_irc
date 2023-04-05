@@ -8,14 +8,11 @@ NOTES:
 				else if channel does not exist send error
 
 TO_DO :
-		operator commands : KICK: Eject a client from the channel
-							MODE: Change the channels modes
-							INVITE: Invite a client to an invite-only channel (mode +i)
-							TOPIC: Change the channel topic in a mode +t channel
 		add if a client ^C or quit, his fd should be removed from all vectors
 		if an operator quits or ^C, there channels should check if there is other operators if not git opperator access to the first user in the channel
-		tester segfault
 		PRIVMSG handle PRIVMSG "as 	" "as "
 		control + Z
+		handle that the channel can be without key to add it with the +k flag in MODE cmd
+		+b +v flag
 
 progress:

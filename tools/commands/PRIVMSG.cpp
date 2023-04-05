@@ -45,7 +45,7 @@ static void	check_all_targets(std::vector<std::string> &targets, irc_client clie
 			else
 				return (send_msg(*it, 0, client, msg), void());
 		else
-			if (!check_if_user_in_channel(client.get_fd(), *it))
+			if (channels[*it].get_message_from_non_member() && !check_if_user_in_channel(client.get_fd(), *it))
 				send_error(client.get_fd(), ":" + client.get_nick() + " 404 " + *it + " :Cannot send to channel\n");
 			else
 				send_msg(*it, 1, client, msg);

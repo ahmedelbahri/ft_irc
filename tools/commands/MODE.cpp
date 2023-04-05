@@ -38,6 +38,14 @@ void	t_flag(char plumin, std::string target)
 		channels[target].get_topic_settable_by_op() = false;
 }
 
+void	n_flag(char plumin, std::string target)
+{
+	if (plumin == '+')
+		channels[target].get_message_from_non_member() = true;
+	else
+		channels[target].get_message_from_non_member() = false;
+}
+
 void	execute_flag(char flag, char plumin, irc_client client, std::string target, std::string args)
 {
 	std::cout << "args =|"<<args<<"|\n";
@@ -54,6 +62,9 @@ void	execute_flag(char flag, char plumin, irc_client client, std::string target,
 			break;
 		case 't':
 			t_flag(plumin, target);
+			break;
+		case 'n':
+			n_flag(plumin, target);
 			break;
 		default:
 			send_error(client.get_fd(), ":" + client.get_nick() + " 461 MODE :501 * :"+ flag +"Unknown  flag\n");

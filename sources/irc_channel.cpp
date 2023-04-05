@@ -11,7 +11,7 @@ irc_channel::irc_channel(std::map<std::string, std::string>::iterator channel, i
 	this->name = channel->first;
 	this->invite_only = false;
 	this->topic_settable_by_op = false;
-	this->topic_settable_by_op = false;
+	this->messsage_from_non_member = false;
 	this->pass = channel->second;
 	opp.push_back(fd);
 }
