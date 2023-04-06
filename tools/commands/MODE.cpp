@@ -2,7 +2,6 @@
 
 void	o_flag(char plumin, irc_client client, std::string target, std::string args)
 {
-	std::cout<<"modestring: |"<<args<<"|"<<std::endl;
 	if (check_if_user_exist(args) != -1)
 		if (plumin == '+')
 			if (!isElementInVector(channels[target].get_opp(), check_if_user_exist(args)))
@@ -46,6 +45,14 @@ void	n_flag(char plumin, std::string target)
 		channels[target].get_message_from_non_member() = false;
 }
 
+void	k_flag(char plumin, std::string target, std::string args)
+{
+	if(plumin == '+')
+		channels[target].get_pass() = args;
+	else
+		channels[target].get_pass() = "";
+}
+
 void	execute_flag(char flag, char plumin, irc_client client, std::string target, std::string args)
 {
 	std::cout << "args =|"<<args<<"|\n";
@@ -65,6 +72,12 @@ void	execute_flag(char flag, char plumin, irc_client client, std::string target,
 			break;
 		case 'n':
 			n_flag(plumin, target);
+			break;
+		case 'k':
+			if (target.empty() || (args.empty() && plumin == '+'))
+				send_error(client.get_fd(), ":" + client.get_nick() + " 461 MODE :Not enough parameters\n");
+			else
+				k_flag(plumin, target, args);
 			break;
 		default:
 			send_error(client.get_fd(), ":" + client.get_nick() + " 461 MODE :501 * :"+ flag +"Unknown  flag\n");
@@ -87,6 +100,10 @@ void	list_all_mode_of_channel(std::string target, irc_client client)
 		send_error(client.get_fd(), ":" + target + " channel is on mode Invite-Only\n");
 	if (channels[target].get_topic_settable_by_op())
 		send_error(client.get_fd(), ":" + target + " channel is on mode Only-Op-Can-Set-Topic\n");
+	if (channels[target].get_message_from_non_member())
+		send_error(client.get_fd(), ":" + target + " channel is on mode Only member can send private messages\n");
+	if (!channels[target].get_pass().empty())
+		send_error(client.get_fd(), ":" + target + " channel has a key\n");
 }
 
 void	execute_channel(std::string args, irc_client client, std::string target)

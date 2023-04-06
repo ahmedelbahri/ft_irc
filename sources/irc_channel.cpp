@@ -36,7 +36,7 @@ std::string	irc_channel::get_name()
 	return (name);
 }
 
-std::string	irc_channel::get_pass()
+std::string	&irc_channel::get_pass()
 {
 	return (pass);
 }

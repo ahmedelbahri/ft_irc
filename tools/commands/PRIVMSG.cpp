@@ -18,7 +18,6 @@ static void	split_args(std::string args, std::vector<std::string> &targets, std:
 		if (!res.empty())
 			targets.push_back(res);
 	}
-	std::cout << "msg: |" << msg << "|" << std::endl;
 }
 
 static void	send_msg(std::string target, int flag, irc_client client, std::string msg)
@@ -26,14 +25,13 @@ static void	send_msg(std::string target, int flag, irc_client client, std::strin
 	if (flag == 0)
 		send_error(check_if_user_exist(target), ":" + client.get_nick() + " PRIVMSG " + target + " :" + msg + "\n");
 	else if (flag == 1)
-	{
-		std::cout << "send msg to channel " << target << std::endl;
 		for (std::vector<int>::iterator it = channels[target].get_members().begin(); it != channels[target].get_members().end(); it++)
+		{
 			if (*it == client.get_fd())
 				continue;
 			else
 				send_error(*it, ":" + client.get_nick() + " PRIVMSG " + target + " :" + msg + "\n");
-	}
+		}
 }
 
 static void	check_all_targets(std::vector<std::string> &targets, irc_client client, std::string msg)

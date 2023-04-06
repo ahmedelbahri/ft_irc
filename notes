@@ -15,4 +15,4 @@ TO_DO :
 		handle that the channel can be without key to add it with the +k flag in MODE cmd
 		+b +v flag
 
-progress:
+progress: begin working in MODE
