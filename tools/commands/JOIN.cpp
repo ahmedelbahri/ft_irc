@@ -1,45 +1,53 @@
 #include "../../includes/ft_irc.hpp"
 
-void	get_arr(std::string str, std::vector<std::string> &arr)
+int	get_arr(std::string str, std::vector<std::string> &arr)
 {
-	int i = 0;
-	str = str.substr(str.find_first_not_of(" "), str.length());
-	str = str.substr(0, str.find_last_not_of(" ") + 1);
-	std::cout << "get_arr" << "|" << str << "|" << std::endl;
-	if ((int)str.find(" ") >= 0)
-		return (std::cout << "error key should not have ' '" << std::endl, void()); 
-	while (str[i])
+	if ((int)str.find_first_of(ISSPACE) >= 0)
+		return (1);
+	std::string res;
+	while (!str.empty())
 	{
-		if (str[i] == ',' && str[i + 1] == '\0')
-			return (std::cout << "error key should not have ', '" << std::endl, void());
-		if (str[i] == ',')
+		if ((int)str.find_first_of(",") < 0)
+			res = str, str.clear();
+		else
 		{
-			arr.push_back(str.substr(0, i));
-			str = str.substr(i + 1, str.length());
-			i = 0;
+			res = str.substr(0, str.find_first_of(","));
+			str = str.substr(str.find_first_of(",") + 1);
 		}
-		i++;
+		if (!res.empty())
+			arr.push_back(res);
 	}
-	arr.push_back(str);
+	return (0);
 }
 
-void	split_args(std::string args, std::map<std::string, std::string> &new_channels, irc_client client)
+int	split_args(std::string args, std::map<std::string, std::string> &new_channels, irc_client client)
 {
 	std::vector<std::string>	channels;
 	std::vector<std::string>	keys;
 
-	args = args.substr(args.find_first_not_of(" "), args.length());
-	args = args.substr(0, args.find_last_not_of(" ") + 1);
-	get_arr(args.substr(0, args.find_first_of(" ")), channels);
-	get_arr(args.substr(args.find_first_of(" "), args.size()), keys);
-	if (channels.size() != keys.size())
-		return (send_error(client.get_fd(), ":" + client.get_nick() + "463 JOIN : each channel should have a key\n"), void());
+	get_arr(args.substr(0, args.find_first_of(ISSPACE)), channels);
+	if ((int)args.find_first_of(ISSPACE) >= 0)
+	{
+		args = args.substr(args.find_first_of(ISSPACE) + 1, args.size());
+		if ((int)args.find_first_of(ISSPACE) >= 0)
+			return (send_error(client.get_fd(), ":" + client.get_nick() + "461 JOIN :Too many parameters\n"), 1);
+		get_arr(args.substr(args.find_first_not_of(ISSPACE), args.size()), keys);
+	}
+	for (std::vector<std::string>::iterator it = channels.begin(); it != channels.end(); it++)
+		std::cout << "channels :" << *it << std::endl;
+	for (std::vector<std::string>::iterator it = keys.begin(); it != keys.end(); it++)
+		std::cout << "keys :" << *it << std::endl;
+	if (channels.size() < keys.size())
+		return (send_error(client.get_fd(), ":" + client.get_nick() + "461 JOIN :Too many keys\n"), 1);
 	std::vector<std::string>::iterator it2 = keys.begin();
 	for (std::vector<std::string>::iterator it = channels.begin(); it != channels.end(); it++)
 	{
-		new_channels.insert(std::pair<std::string, std::string>(*it, *it2));
-		it2++;
+		if (it2 != keys.end())
+			new_channels.insert(std::pair<std::string, std::string>(*it, *it2)), it2++;
+		else
+			new_channels.insert(std::pair<std::string, std::string>(*it, ""));
 	}
+	return (0);
 }
 
 bool	isElementInVector(const std::vector<int>& vec, int elem) {
@@ -47,12 +55,6 @@ bool	isElementInVector(const std::vector<int>& vec, int elem) {
 		if (*it == elem)
 			return true;
 	return false;
-}
-
-void	send_msg(int fd, std::string msg)
-{
-	msg = msg + "\r\n";
-	send(fd, msg.c_str(), msg.size(), 0);
 }
 
 void	create_channels(std::map<std::string, std::string> new_channels,irc_client client)
@@ -66,7 +68,7 @@ void	create_channels(std::map<std::string, std::string> new_channels,irc_client 
 			channels.erase(it->first);
 		channels.insert(std::pair<std::string, irc_channel>(it->first, irc_channel(it, client.get_fd())));
 		if (isElementInVector(channels[it->first].get_members(), client.get_fd()))
-			(send_msg(client.get_fd(), ": 443 * " + clients[client.get_fd()].get_nick() + " " + it->first + " :is already on channel"), 0);
+			(send_error(client.get_fd(), ": 443 * " + clients[client.get_fd()].get_nick() + " " + it->first + " :is already on channel\n"), 0);
 		else
 		{
 			if (channels[it->first].get_mode())
@@ -96,11 +98,11 @@ void	create_channels(std::map<std::string, std::string> new_channels,irc_client 
 void	irc_client::JOIN(std::string args)
 {
 	std::map<std::string, std::string>	new_channels;
-	if (args.empty() || (int)args.find_first_not_of(" \t\v\f\r") < 0 || (int)args.find(" ") < 0)
+	if (args.empty())
 		send_error(this->fd, ":" + this->nick + "461 JOIN :Not enough parameters\n");
 	else
 	{
-		split_args(args, new_channels, *this);
-		create_channels(new_channels, *this);
+		if (split_args(args, new_channels, *this) == 0)
+			create_channels(new_channels, *this);
 	}
 }
