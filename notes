@@ -1,6 +1,6 @@
 TO_DO :
+		delete sigint_handler and check that there is no difference
 		tester b adium
-		add if a client ^C or quit, his fd should be removed from all vectors
 		if an operator quits or ^C, there channels should check if there is other operators if not git opperator access to the first user in the channel
 
 progress: function to delete a client need some tests , and add it in sigint handler

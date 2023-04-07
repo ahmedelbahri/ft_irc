@@ -16,7 +16,6 @@ private:
 	int							sock_fd;
 	struct sockaddr_in			addr;
 	bool						check_poll_fd;
-	std::vector<irc_channel>	channels;
 public:
 						irc_server(void);
 	int					set_fd(int socket_fd);

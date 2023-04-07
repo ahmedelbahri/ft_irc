@@ -122,6 +122,7 @@ void	irc_server::check_pollable_discriptors(int &pollfd_size)
 		if (poll_fd[i].revents & POLLHUP) // check & POLLHUP
 		{
 			std::cout << "client " << poll_fd[i].fd << " disconnected." << std::endl;
+			delete_client(poll_fd[i].fd);
 			close(poll_fd[i].fd);
 			clients.erase(poll_fd[i].fd);
 			poll_fd[i].fd = -1;

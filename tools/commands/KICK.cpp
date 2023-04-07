@@ -17,7 +17,7 @@ void	irc_client::KICK(std::string args)
 		std::string	chan = args.substr(0, args.find_first_of(ISSPACE));
 		args = args.substr(args.find_first_of(ISSPACE));
 		args = args.substr(args.find_first_not_of(ISSPACE));
-		std::string	nicks = args.substr(0, args.find_first_of(" "));
+		std::string	nicks = args.substr(0, args.find_first_of(ISSPACE));
 		int			pos = (args.find_first_of(" "));
 		std::string	reason = " for reason :";
 		if (pos < 0)

@@ -3,7 +3,7 @@ CPP = main.cpp\
 	./sources/irc_client.cpp ./sources/irc_server.cpp ./sources/irc_channel.cpp\
 \
 	./tools/error.cpp ./tools/ft_check.cpp ./tools/sigint_handler.cpp ./tools/check_cmd.cpp\
-	./tools/send_error.cpp\
+	./tools/send_error.cpp ./tools/delete_client.cpp\
 \
 	./tools/commands/PASS.cpp ./tools/commands/NICK.cpp ./tools/commands/USER.cpp\
 	./tools/commands/JOIN.cpp ./tools/commands/PART.cpp ./tools/commands/INVITE.cpp\
