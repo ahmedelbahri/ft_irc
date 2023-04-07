@@ -34,17 +34,6 @@ int main (int ac, char **av)
 		server.check_pollable_discriptors(pollfd_size);
 		server.remove_closed_discriptors(pollfd_size);
 		check_cmd();
-		// std::cout << "++++++++++++++++++" << std::endl; 
-		// for (std::map<std::string, irc_channel>::iterator it = channels.begin(); it != channels.end(); it++)
-		// {
-		// 	std::cout << "------------------" << std::endl;
-		// 	std::cout << "name :" << it->second.get_name() << std::endl;
-		// 	std::cout << it->second.get_mode() << std::endl;
-		// 	for (int i = 0; i < (int)it->second.get_opp().size(); i++)
-		// 		std::cout << "operator :" << it->second.get_opp()[i] << std::endl;
-		// 	std::cout << it->second.get_pass() << std::endl;
-		// 	std::cout << "------------------" << std::endl;
-		// }
 	}
 	return (0);
 }

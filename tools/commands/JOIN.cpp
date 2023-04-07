@@ -33,10 +33,6 @@ int	split_args(std::string args, std::map<std::string, std::string> &new_channel
 			return (send_error(client.get_fd(), ":" + client.get_nick() + "461 JOIN :Too many parameters\n"), 1);
 		get_arr(args.substr(args.find_first_not_of(ISSPACE), args.size()), keys);
 	}
-	for (std::vector<std::string>::iterator it = channels.begin(); it != channels.end(); it++)
-		std::cout << "channels :" << *it << std::endl;
-	for (std::vector<std::string>::iterator it = keys.begin(); it != keys.end(); it++)
-		std::cout << "keys :" << *it << std::endl;
 	if (channels.size() < keys.size())
 		return (send_error(client.get_fd(), ":" + client.get_nick() + "461 JOIN :Too many keys\n"), 1);
 	std::vector<std::string>::iterator it2 = keys.begin();

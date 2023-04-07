@@ -55,7 +55,6 @@ void	k_flag(char plumin, std::string target, std::string args)
 
 void	execute_flag(char flag, char plumin, irc_client client, std::string target, std::string args)
 {
-	std::cout << "args =|"<<args<<"|\n";
 	switch (flag)
 	{
 		case 'o':
@@ -80,7 +79,7 @@ void	execute_flag(char flag, char plumin, irc_client client, std::string target,
 				k_flag(plumin, target, args);
 			break;
 		default:
-			send_error(client.get_fd(), ":" + client.get_nick() + " 461 MODE :501 * :"+ flag +"Unknown  flag\n");
+			send_error(client.get_fd(), ":" + client.get_nick() + "501 * :"+ flag +"Unknown  flag\n");
 	}
 }
 
@@ -96,6 +95,8 @@ void	execute_flags(std::string modestring, irc_client client, std::string target
 void	list_all_mode_of_channel(std::string target, irc_client client)
 {
 	std::string	mode = "+";
+	if (!channels[target].get_topic().empty())
+		send_error(client.get_fd(), ":" + target + " channel topic is " + channels[target].get_topic() + "\n");
 	if (channels[target].get_mode())
 		send_error(client.get_fd(), ":" + target + " channel is on mode Invite-Only\n");
 	if (channels[target].get_topic_settable_by_op())
@@ -108,7 +109,6 @@ void	list_all_mode_of_channel(std::string target, irc_client client)
 
 void	execute_channel(std::string args, irc_client client, std::string target)
 {
-
 	if (args.empty())
 	{
 		list_all_mode_of_channel(target, client);
@@ -131,7 +131,7 @@ void	irc_client::MODE(std::string args)
 	else
 	{
 		std::string	target = args.substr(0, args.find_first_of(ISSPACE));
-		args = args.substr((int)args.find_first_of(ISSPACE) > 0 ? args.find_first_of(ISSPACE) : 0);
+		args = args.substr(target.size(), (int)args.find_first_of(ISSPACE) > 0 ? args.find_first_of(ISSPACE) : 0);
 		args = args.substr((int)args.find_first_not_of(ISSPACE) > 0 ? args.find_first_not_of(ISSPACE) : 0);
 		if (channels.find(target) == channels.end())
 			send_error(this->fd, ":" + this->nick + " 403 " + target + " :No such channel\n");
