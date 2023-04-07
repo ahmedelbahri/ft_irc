@@ -93,5 +93,7 @@ void	irc_client::exec_cmd(void)
 		this->TOPIC(args);
 	else if (cmd == "PRIVMSG") // authenticate
 		this->PRIVMSG(args);
+	else if (cmd == "NOTICE") // authenticate
+		this->NOTICE(args);
 }
 

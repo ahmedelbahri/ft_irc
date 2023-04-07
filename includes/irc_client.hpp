@@ -30,6 +30,7 @@ public:
 	void		KICK(std::string args);
 	void		TOPIC(std::string args);
 	void		PRIVMSG(std::string args);
+	void		NOTICE(std::string args);
 				~irc_client(void);
 };
 
