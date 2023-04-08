@@ -37,28 +37,37 @@ std::string	irc_client::get_nick(void)
 
 std::string	irc_client::msg_auth()
 {
-	return (":ahel-bid 001 " + this->nick + " : welcome to the internet relay chat\r\n"
-			":ahel-bid 002 " + this->nick + " :Your host is ahel-bid, running version 1.0\r\n"
-			":ahel-bid 003 " + this->nick + " :This server was created 28/12/2022\r\n"
-			":ahel-bid 004 " + this->nick + " ahel-bid 1.0 - -\r\n"
-			":ahel-bid 372 " + this->nick + " 🔨 welcome to ahel-bid 🔨\r\n"
-			":ahel-bid 376 " + this->nick + " :End of /MOTD command\r\n");
+	return (":ircserv 001 " + this->nick + " : welcome to ircserv\r\n"
+			":ircserv 002 " + this->nick + " :Your host is ircserv, running version 1.0\r\n"
+			":ircserv 003 " + this->nick + " :This server was created 22/03/2023\r\n"
+			":ircserv 004 " + this->nick + " ircserv 1.0 - -\r\n"
+			":ircserv 372 " + this->nick + " welcome to ircserv\r\n"
+			":ircserv 376 " + this->nick + " :End of /MOTD command\r\n");
 }
 
-// std::string	irc_client::chan_verif()
-// {
-// 	return (":Rαɠɳαɾöƙ 001 " + server.clients[index]->nick + " : welcome to the internet relay chat\r\n"
-// 			":Rαɠɳαɾöƙ 002 " + server.clients[index]->nick + " :Your host is Rαɠɳαɾöƙ, running version 1.0\r\n"
-// 			":Rαɠɳαɾöƙ 003 " + server.clients[index]->nick + " :This server was created 28/12/2022\r\n"
-// 			":Rαɠɳαɾöƙ 004 " + server.clients[index]->nick + " Rαɠɳαɾöƙ 1.0 - -\r\n"
-// 			":Rαɠɳαɾöƙ 372 " + server.clients[index]->nick + " 🔨 𝔚𝔢𝔩𝔠𝔬𝔪𝔢 𝔗𝔬 Rαɠɳαɾöƙ 🔨\r\n"
-// 			":Rαɠɳαɾöƙ 376 " + server.clients[index]->nick + " :End of /MOTD command\r\n");
-// }
+struct sockaddr_in	&irc_client::get_addr(void)
+{
+	return (this->addr);
+}
+
+void	irc_client::set_addr(void)
+{
+	this->numeric_address = inet_ntoa(this->addr.sin_addr);
+}
+
+std::string	irc_client::get_num_addr(void)
+{
+	return (this->numeric_address);
+}
+
+std::string	irc_client::get_username(void)
+{
+	return (this->username);
+}
 
 void	irc_client::exec_cmd(void)
 {
 	int len = this->buffer.find_first_of(" ");
-	// this->buffer.erase(remove(this->buffer.begin(), this->buffer.end(), '\r'), this->buffer.end()); // clear args form \r
 	std::string	cmd = this->buffer.substr(0, len);
 	std::string	args = len > 0 ? this->buffer.substr(len + 1, this->buffer.length()) : "";
 	args = args.substr((int)args.find_first_not_of(ISSPACE) >= 0 ? (int)args.find_first_not_of(ISSPACE) : 0);
@@ -79,21 +88,21 @@ void	irc_client::exec_cmd(void)
 		this->NICK(args);
 	else if (cmd == "USER")
 		this->USER(args);
-	else if (cmd == "JOIN") // authenticate
+	else if (cmd == "JOIN" && this->authenticated == 2)
 		this->JOIN(args);
-	else if (cmd == "PART") // authenticate
+	else if (cmd == "PART" && this->authenticated == 2)
 		this->PART(args);
-	else if (cmd == "INVITE") // authenticate
+	else if (cmd == "INVITE" && this->authenticated == 2)
 		this->INVITE(args);
-	else if (cmd == "MODE") // authenticate
+	else if (cmd == "MODE" && this->authenticated == 2)
 		this->MODE(args);
-	else if (cmd == "KICK") // authenticate
+	else if (cmd == "KICK" && this->authenticated == 2)
 		this->KICK(args);
-	else if (cmd == "TOPIC") // authenticate
+	else if (cmd == "TOPIC" && this->authenticated == 2)
 		this->TOPIC(args);
-	else if (cmd == "PRIVMSG") // authenticate
+	else if (cmd == "PRIVMSG" && this->authenticated == 2)
 		this->PRIVMSG(args);
-	else if (cmd == "NOTICE") // authenticate
+	else if (cmd == "NOTICE" && this->authenticated == 2)
 		this->NOTICE(args);
 }
 

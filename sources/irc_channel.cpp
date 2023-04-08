@@ -71,8 +71,27 @@ void	irc_channel::inform_members(std::string msg, int fd)
 void	irc_channel::add_member(int fd)
 {
 	this->members.push_back(fd);
-	inform_members(":" + clients[fd].get_nick() + " JOIN " + this->name + "\n", fd);
-	send_error(fd, ":" + clients[fd].get_nick() + " 332 JOIN :" + (this->topic.empty() ? "No topic is set\n" : this->topic + "\n"));
+	if (this->members.size() != 1)
+	{
+		std::string msg = ":" + clients[fd].get_nick() + "!" + clients[fd].get_username() + "@" + clients[fd].get_num_addr() + " JOIN " + name + "\r\n"
+		":ircserv 332 " + clients[fd].get_nick() + " " + name + " :" + (this->topic.empty() ? "No topic is set" : this->topic) + "\r\n"
+		":ircserv 333 " + clients[fd].get_nick() + " " + name + " " + clients[opp[0]].get_nick() + "!" + clients[fd].get_username() + "@" + clients[fd].get_num_addr() + "\r\n"
+		// for (std::vector<int>::iterator it = this->members.begin(); it != this->members.end(); it++)
+		// ":ircserv 353 " + clients[fd].get_nick() + (this->pass == "" ? " = " : " * ") + name + " :" + clients[*it].get_nick() + " @" + clients[opp[0]].get_nick() + "\r\n";
+		":ircserv 353 " + clients[fd].get_nick() + (this->pass == "" ? " = " : " * ") + name + " :@" + clients[fd].get_nick() + "\r\n"
+		":ircserv 366 " + clients[fd].get_nick() + " " + name + " :End of /NAMES list.\r\n"
+		":" + clients[fd].get_nick() + "!" + clients[fd].get_username() + "@" + clients[fd].get_num_addr() + " JOIN " + name + "\r\n";
+		send_error(fd, msg);
+		inform_members(":" + clients[fd].get_nick() + "!" + clients[fd].get_username() + "@" + clients[fd].get_num_addr() + " JOIN " + this->name + "\r\n", fd);
+	}
+	else
+	{
+		std::string msg = ":" + clients[fd].get_nick() + "!" + clients[fd].get_username() + "@" + clients[fd].get_num_addr() + " JOIN " + name + "\r\n"
+		":ircserv MODE m +m\r\n"
+		":ircserv 353 " + clients[fd].get_nick() + (this->pass == "" ? " = " : " * ") + name + " :@" + clients[fd].get_nick() + "\r\n"
+		":ircserv 366 " + clients[fd].get_nick() + " " + name + " :End of /NAMES list.\r\n";
+		send_error(fd, msg);
+	}
 }
 
 irc_channel::~irc_channel()

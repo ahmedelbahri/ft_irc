@@ -10,12 +10,12 @@ class irc_channel;
 class irc_server
 {
 private:
-	int							dummy; // tan3arfoh o nsemiwh
-	int							port;
-	std::string					password;
-	int							sock_fd;
-	struct sockaddr_in			addr;
-	bool						check_poll_fd;
+	int					dummy; // tan3arfoh o nsemiwh
+	int					port;
+	std::string			password;
+	int					sock_fd;
+	struct sockaddr_in	addr;
+	bool				check_poll_fd;
 public:
 						irc_server(void);
 	int					set_fd(int socket_fd);

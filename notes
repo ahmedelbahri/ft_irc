@@ -1,5 +1,4 @@
 TO_DO :
-		delete sigint_handler and check that there is no difference
 		tester b adium
 		if an operator quits or ^C, there channels should check if there is other operators if not git opperator access to the first user in the channel
 

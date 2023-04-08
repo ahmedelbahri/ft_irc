@@ -76,9 +76,10 @@ void	irc_server::fd_is_socket(int &pollfd_size)
 
 	while (client_fd != -1)
 	{
-		if ((client_fd = accept(this->sock_fd, (struct sockaddr *)&(this->addr), &addr_len)) < 0
+		if ((client_fd = accept(this->sock_fd, (struct sockaddr *)&(client.get_addr()), &addr_len)) < 0
 			&& (errno != EWOULDBLOCK))
 			error("accept() failed whith error number: ", errno);
+		client.set_addr();
 		if (client_fd > 0 && pollfd_size < MAX_QUEUE)
 		{
 			std::cout << "Connection accepted." << std::endl;
@@ -118,7 +119,7 @@ void	irc_server::check_pollable_discriptors(int &pollfd_size)
 	{
 		if (poll_fd[i].revents == 0)
 			continue;
-		if (poll_fd[i].revents & POLLHUP) // check & POLLHUP
+		if (poll_fd[i].revents & POLLHUP)
 		{
 			std::cout << "client " << poll_fd[i].fd << " disconnected." << std::endl;
 			delete_client(poll_fd[i].fd);
