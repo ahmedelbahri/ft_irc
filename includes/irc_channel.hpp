@@ -27,6 +27,7 @@ public:
 	std::vector<int>	&get_opp();
 	std::vector<int>	&get_invites();
 	std::vector<int>	&get_members();
+	std::string			get_members_list(void);
 	void				add_member(int fd);
 	void				inform_members(std::string msg, int fd);
 						~irc_channel();

@@ -68,6 +68,14 @@ void	irc_channel::inform_members(std::string msg, int fd)
 			send_error(*it, msg);
 }
 
+std::string	irc_channel::get_members_list(void)
+{
+	std::string list = "@";
+	for (std::vector<int>::iterator it = this->members.begin(); it != this->members.end(); it++)
+		list += clients[*it].get_nick() + " ";
+	return (list);
+}
+
 void	irc_channel::add_member(int fd)
 {
 	this->members.push_back(fd);
@@ -76,11 +84,8 @@ void	irc_channel::add_member(int fd)
 		std::string msg = ":" + clients[fd].get_nick() + "!" + clients[fd].get_username() + "@" + clients[fd].get_num_addr() + " JOIN " + name + "\r\n"
 		":ircserv 332 " + clients[fd].get_nick() + " " + name + " :" + (this->topic.empty() ? "No topic is set" : this->topic) + "\r\n"
 		":ircserv 333 " + clients[fd].get_nick() + " " + name + " " + clients[opp[0]].get_nick() + "!" + clients[fd].get_username() + "@" + clients[fd].get_num_addr() + "\r\n"
-		// for (std::vector<int>::iterator it = this->members.begin(); it != this->members.end(); it++)
-		// ":ircserv 353 " + clients[fd].get_nick() + (this->pass == "" ? " = " : " * ") + name + " :" + clients[*it].get_nick() + " @" + clients[opp[0]].get_nick() + "\r\n";
-		":ircserv 353 " + clients[fd].get_nick() + (this->pass == "" ? " = " : " * ") + name + " :@" + clients[fd].get_nick() + "\r\n"
-		":ircserv 366 " + clients[fd].get_nick() + " " + name + " :End of /NAMES list.\r\n"
-		":" + clients[fd].get_nick() + "!" + clients[fd].get_username() + "@" + clients[fd].get_num_addr() + " JOIN " + name + "\r\n";
+		":ircserv 353 " + clients[fd].get_nick() + (this->pass == "" ? " = " : " * ") + name + " :" + get_members_list() + "\r\n"
+		":ircserv 366 " + clients[fd].get_nick() + " " + name + " :End of /NAMES list.\r\n";
 		send_error(fd, msg);
 		inform_members(":" + clients[fd].get_nick() + "!" + clients[fd].get_username() + "@" + clients[fd].get_num_addr() + " JOIN " + this->name + "\r\n", fd);
 	}
