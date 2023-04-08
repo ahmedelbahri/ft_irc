@@ -17,11 +17,16 @@ void	irc_client::TOPIC(std::string args)
 			send_error(this->fd, ":" + this->nick + " 442 " + nick + " :you are not on that channel\n");
 		else if (args.empty())
 			send_error(fd, ":" + clients[fd].get_nick() + (channels[chan].get_topic().empty() ? "331 TOPIC :No topic is set\n" : "332 TOPIC :" + channels[chan].get_topic() + "\n"));
-		else if (!args.empty() && ((channels[chan].get_topic_settable_by_op() && isElementInVector(channels[chan].get_opp() ,this->fd)) || !channels[chan].get_topic_settable_by_op()))
+		else if (!args.empty())
 		{
-			std::string	topic = args.substr(args.find_first_not_of(" ", nick.size()), args.find_last_not_of(" ") + 1);
-			channels[chan].get_topic() = topic;
-			send_error(fd, ":" + clients[fd].get_nick() + " 332 " + chan + " :" + topic + "\n");
+			if ((channels[chan].get_topic_settable_by_op() && isElementInVector(channels[chan].get_opp() ,this->fd)) || !channels[chan].get_topic_settable_by_op())
+			{
+				std::string	topic = args;
+				channels[chan].get_topic() = topic;
+				send_error(fd, ":" + clients[fd].get_nick() + " 332 " + chan + " :" + topic + "\n");
+			}
+			else if (channels[chan].get_topic_settable_by_op() && !isElementInVector(channels[chan].get_opp() ,this->fd))
+				send_error(fd, ":" + nick + " 482 " + chan + " :You're not channel operator\n");
 		}
 	}
 }

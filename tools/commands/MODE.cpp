@@ -2,7 +2,6 @@
 
 void	o_flag(char plumin, irc_client client, std::string target, std::string args)
 {
-	std::cout << "args = |"<< args<<"|" << std::endl;
 	if (check_if_user_exist(args) != -1)
 		if (check_if_user_in_channel(check_if_user_exist(args), channels[target].get_name()))
 			if (plumin == '+')
