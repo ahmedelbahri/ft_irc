@@ -49,6 +49,11 @@ void	part_from_channels(std::vector<std::string> &channels_to_part, std::string 
 			{
 				std::string msg = ":" + client.get_nick() + " PART " + *it + reason + "\n";
 				eraseElementFromVector(channels[*it].get_members(), client.get_fd());
+				eraseElementFromVector(channels[*it].get_invites(), client.get_fd());
+				eraseElementFromVector(channels[*it].get_opp(), client.get_fd());
+				if (channels[*it].get_opp().empty())
+					if (!channels[*it].get_members().empty())
+						channels[*it].get_opp().push_back(channels[*it].get_members()[0]);
 				send_error(client.get_fd(), msg);
 				channels[*it].inform_members(msg, client.get_fd());
 			}

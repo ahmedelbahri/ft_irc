@@ -43,6 +43,8 @@ void	irc_client::KICK(std::string args)
 					send_error(check_if_user_exist(nick), ":" + this->nick + " KICK you from " + chan + reason + "\n");
 					send_error(this->fd, ":341 you kicked " + nick + " from " + chan + reason + "\n");
 					eraseElementFromVector(channels[chan].get_members(), check_if_user_exist(nick));
+					eraseElementFromVector(channels[chan].get_invites(), check_if_user_exist(nick));
+					eraseElementFromVector(channels[chan].get_opp(), check_if_user_exist(nick));
 				}
 				if ((int)nicks.find_first_of(",") < 0)
 					break;
