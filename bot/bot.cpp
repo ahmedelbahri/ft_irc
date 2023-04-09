@@ -1,7 +1,7 @@
 #include"../includes/ft_irc.hpp"
 
 bool check_number(std::string str) {
-	for (int i = 0; i < str.length(); i++)
+	for (size_t i = 0; i < str.length(); i++)
 		if (isdigit(str[i]) == false)
 			return false;
 	return true;
@@ -9,7 +9,7 @@ bool check_number(std::string str) {
 
 void	convert(std::string amount)
 {
-	
+
 }
 
 void	irc_client::BOT(std::string args)
