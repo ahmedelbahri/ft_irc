@@ -70,9 +70,14 @@ void	irc_channel::inform_members(std::string msg, int fd)
 
 std::string	irc_channel::get_members_list(void)
 {
-	std::string list = "@";
+	std::string list;
 	for (std::vector<int>::iterator it = this->members.begin(); it != this->members.end(); it++)
-		list += clients[*it].get_nick() + " ";
+	{
+		if (isElementInVector(this->opp, *it))
+			list += "@" + clients[*it].get_nick() + " ";
+		else
+			list += clients[*it].get_nick() + " ";
+	}
 	return (list);
 }
 

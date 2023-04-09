@@ -41,6 +41,7 @@ void	irc_client::KICK(std::string args)
 				else
 				{
 					send_error(check_if_user_exist(nick), ":" + this->nick + " KICK you from " + chan + reason + "\n");
+					channels[chan].inform_members(":" + nick + " PART " + chan + reason + "\n", this->fd);
 					send_error(this->fd, ":341 you kicked " + nick + " from " + chan + reason + "\n");
 					eraseElementFromVector(channels[chan].get_members(), check_if_user_exist(nick));
 					eraseElementFromVector(channels[chan].get_invites(), check_if_user_exist(nick));

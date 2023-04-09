@@ -30,23 +30,44 @@ int	irc_server::get_port(void)
 
 void	irc_server::init_server(void)
 {
-	if ((this->sock_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) // socket
+	// socket is a system call that creates a new communication endpoint (or socket)
+	// and returns a file descriptor that refers to that endpoint
+
+	// AF_INET is the address family that is used to designate the type of addresses
+	// that your socket can communicate with (IPv4) Ex: 10.11.5.4
+
+	// SOCK_STREAM is a connection-based protocol, which means that TCP is used.
+	// TCP is a reliable stream protocol that guarantees that all data will be delivered
+	// but slow compared to UDP
+	if ((this->sock_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
 		error("socket() failed");
 
-	if (fcntl(this->sock_fd, F_SETFL, O_NONBLOCK) == -1) // fcntl
+	// fcntl is a system call that allows the programmer to manipulate file descriptors
+	// F_SETFL is a command that sets the file status flags to the value specified by arg
+	// O_NONBLOCK is a flag that sets the file status flag to non-blocking mode
+	if (fcntl(this->sock_fd, F_SETFL, O_NONBLOCK) == -1)
 		error("fcntl() failed");
 
-	if (setsockopt(this->sock_fd, SOL_SOCKET, SO_REUSEADDR, &(this->dummy), sizeof(this->dummy)) == -1) // setsockopt
+	// setsockopt is a system call that allows the programmer to manipulate the options
+	// SOL_SOCKET is a level that allows the programmer to manipulate options at the socket API level
+	// SO_REUSEADDR is a socket option that allows the socket to be bound to an address that is already in use
+	// dummy is a variable that is used to set the value of the socket option
+	if (setsockopt(this->sock_fd, SOL_SOCKET, SO_REUSEADDR, &(this->dummy), sizeof(this->dummy)) == -1)
 		error("setsockopt() failed");
 
 	bzero(&(this->addr), sizeof((this->addr)));
-	(this->addr).sin_family = AF_INET; // AF_INET
-	(this->addr).sin_port = htons(this->port); // htons
-	(this->addr).sin_addr.s_addr = htonl(INADDR_ANY); // htonl
+	(this->addr).sin_family = AF_INET;
+	// htons is a function that converts a u_short from host to TCP/IP network byte order
+	(this->addr).sin_port = htons(this->port);
+	// htonl is a function that converts a u_long from host to TCP/IP network byte order
+	(this->addr).sin_addr.s_addr = htonl(INADDR_ANY);
 
+	// bind is a system call that assigns a local protocol address to a socket
 	if (bind(this->sock_fd, (struct sockaddr *)&(this->addr), addr_len) == -1)
 		error("bind() failed");
 
+	// listen is a system call that marks a socket as a passive socket
+	// meaning that it will be used to accept incoming connection requests using accept
 	if (listen(this->sock_fd, MAX_QUEUE) == -1)
 		error("listen() failed");
 }
@@ -76,6 +97,7 @@ void	irc_server::fd_is_socket(int &pollfd_size)
 
 	while (client_fd != -1)
 	{
+		// accept is a system call that extracts the first connection request on the queue of pending connections
 		if ((client_fd = accept(this->sock_fd, (struct sockaddr *)&(client.get_addr()), &addr_len)) < 0
 			&& (errno != EWOULDBLOCK))
 			error("accept() failed whith error number: ", errno);

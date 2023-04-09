@@ -26,6 +26,7 @@ int main (int ac, char **av)
 	std::cout << "waiting on port " << server.get_port() << std::endl;
 	while (true)
 	{
+		// poll is used to monitor I/O events on a set of file descriptors
 		if ((activity = poll(poll_fd, pollfd_size, timeout)) == -1) // poll
 			error("poll() failed.");
 		if (activity == 0)
