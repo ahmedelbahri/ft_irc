@@ -67,3 +67,8 @@ void	irc_client::NOTICE(std::string args)
 		}
 	}
 }
+
+void	irc_client::BOT(std::string args)
+{
+
+}

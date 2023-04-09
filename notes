@@ -1,7 +1,3 @@
 TO_DO :
-		tester b adium
-		if an operator quits or ^C, there channels should check if there is other operators if not git opperator access to the first user in the channel
 		user in USER cmd should not be name
-
-progress: function to delete a client need some tests , and add it in sigint handler
 

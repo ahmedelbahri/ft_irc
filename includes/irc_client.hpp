@@ -37,6 +37,7 @@ public:
 	void				TOPIC(std::string args);
 	void				PRIVMSG(std::string args);
 	void				NOTICE(std::string args);
+	void				BOT(std::string args);
 						~irc_client(void);
 };
 
