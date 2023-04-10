@@ -95,7 +95,7 @@ double	convert(std::string amount, std::string	of, std::string towards)
 void	irc_client::BOT(std::string args)
 {
 	if (args.empty())
-		send_error(this->fd, ":" + this->nick + " give me {AMOUNT OF TOWARDS}\n--currency available in OF and TOWARDS \n--USD\n--MAD\n--EUR\n--CAD\n");
+		send_error(this->fd, ":" + this->nick + " give me {AMOUNT OF TOWARDS}\n--currency available in OF and TOWARDS: \n--USD\n--MAD\n--EUR\n--CAD\n");
 	else
 	{
 		int	empty = 0;

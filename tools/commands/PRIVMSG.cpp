@@ -23,14 +23,14 @@ static void	split_args(std::string args, std::vector<std::string> &targets, std:
 static void	send_msg(std::string target, int flag, irc_client client, std::string msg)
 {
 	if (flag == 0)
-		send_error(check_if_user_exist(target), ":" + client.get_nick() + " PRIVMSG " + target + " :" + msg + "\n");
+		send_error(check_if_user_exist(target), ":" + client.get_nick() + "!" + client.get_username() + "@" + client.get_num_addr() + " PRIVMSG " + target + " " + msg + "\r\n");
 	else if (flag == 1)
 		for (std::vector<int>::iterator it = channels[target].get_members().begin(); it != channels[target].get_members().end(); it++)
 		{
 			if (*it == client.get_fd())
 				continue;
 			else
-				send_error(*it, ":" + client.get_nick() + " PRIVMSG " + target + " :" + msg + "\n");
+				send_error(*it, ":" + client.get_nick() + "!" + client.get_username() + "@" + client.get_num_addr() + " PRIVMSG " + target + " " + msg + "\r\n");
 		}
 }
 

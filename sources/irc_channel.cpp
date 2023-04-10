@@ -64,8 +64,11 @@ std::string	&irc_channel::get_topic()
 void	irc_channel::inform_members(std::string msg, int fd)
 {
 	for (std::vector<int>::iterator it = this->members.begin(); it != this->members.end(); it++)
+	{
 		if(*it != fd)
-			send_error(*it, msg);
+			;
+		send_error(*it, msg);
+	}
 }
 
 std::string	irc_channel::get_members_list(void)
@@ -92,7 +95,7 @@ void	irc_channel::add_member(int fd)
 		":ircserv 353 " + clients[fd].get_nick() + (this->pass == "" ? " = " : " * ") + name + " :" + get_members_list() + "\r\n"
 		":ircserv 366 " + clients[fd].get_nick() + " " + name + " :End of /NAMES list.\r\n";
 		send_error(fd, msg);
-		inform_members(":" + clients[fd].get_nick() + "!" + clients[fd].get_username() + "@" + clients[fd].get_num_addr() + " JOIN " + this->name + "\r\n", fd);
+		(":" + clients[fd].get_nick() + "!" + clients[fd].get_username() + "@" + clients[fd].get_num_addr() + " JOIN " + this->name + "\r\n", fd);
 	}
 	else
 	{

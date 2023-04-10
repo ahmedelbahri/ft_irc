@@ -25,8 +25,6 @@ void	irc_client::INVITE(std::string args)
 			send_error(this->fd, ":" + this->nick + " 482 " + chan + " :You're not channel operator\n");
 		else if (isElementInVector(channels[chan].get_members(), check_if_user_exist(nick)))
 			send_error(this->fd, ":" + this->nick + " 443 " + nick + " " + chan + " :is already on channel\n");
-		else if (!channels[chan].get_mode())
-			send_error(this->fd, ":" + this->nick + " 442 :channel not in mode invite\n");
 		else
 		{
 			send_error(check_if_user_exist(nick), ":" + this->nick + " INVITE you to " + chan + "\n");

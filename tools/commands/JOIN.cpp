@@ -59,7 +59,7 @@ void	create_channels(std::map<std::string, std::string> new_channels,irc_client 
 	for (it = new_channels.begin(); it != new_channels.end(); it++)
 	{
 		if (it->first[0] != '#' && it->first[0] != '&')
-			return (send_error(client.get_fd(), ":" + client.get_nick() + "460 JOIN : private channel begin with '&' and public with '#'\n"), void());
+			return (send_error(client.get_fd(), ":" + client.get_nick() + " 460 JOIN : private channel begin with '&' and public with '#'\n"), void());
 		if (channels[it->first].get_members().empty())
 			channels.erase(it->first);
 		channels.insert(std::pair<std::string, irc_channel>(it->first, irc_channel(it, client.get_fd())));
