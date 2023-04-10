@@ -104,7 +104,7 @@ void	irc_client::exec_cmd(void)
 		this->PRIVMSG(args);
 	else if (cmd == "NOTICE" && this->authenticated == 2)
 		this->NOTICE(args);
-	else if (cmd == "BOT" && this->authenticated == 2)
+	else if (cmd == "/convert" && this->authenticated == 2)
 		this->BOT(args);
 }
 

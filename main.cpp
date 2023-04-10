@@ -12,7 +12,7 @@ int main (int ac, char **av)
 {
 	server.set_server(ft_check(ac, av), av[2]);
 
-	int			timeout = (5 * 60 * 1000); // in the following order: minutes, seconds, milliseconds
+	int			timeout = (3 * 60 * 1000); // in the following order: minutes, seconds, milliseconds
 	int			activity;
 
 	signal(SIGINT, sigint_handler);

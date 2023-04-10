@@ -14,7 +14,7 @@ CPP = main.cpp\
 HPP = ./includes/irc_client.hpp ./includes/irc_server.hpp ./includes/ft_irc.hpp\
 	./includes/irc_channel.hpp
 OBJ = $(CPP:.cpp=.o)
-CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -fsanitize=address
+CXXFLAGS = -Wall -Wextra -Werror -std=c++98
 CXX = c++
 NAME = ircserv
 

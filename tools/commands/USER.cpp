@@ -16,9 +16,10 @@ void	irc_client:: USER(std::string args)
 		send_error(this->fd, ERR_ALREADYREGISTERED);
 	else
 	{
-		int len = this->buffer.find_first_of(" \n");
-		std::string	name = this->buffer.substr(0, len);
-		this->username = name;
+		int len = this->buffer.find_first_of(ISSPACE);
+		this->buffer = this->buffer.substr(len);
+		this->buffer = this->buffer.substr(this->buffer.find_first_not_of(ISSPACE));
+		this->username = this->buffer.substr(0, this->buffer.find_first_of(ISSPACE));
 		this->authenticated = 3;
 		if (!this->nick.empty())
 		{

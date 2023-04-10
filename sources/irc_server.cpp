@@ -95,25 +95,21 @@ void	irc_server::fd_is_socket(int &pollfd_size)
 	int			client_fd = 0;
 	irc_client	client;
 
-	while (client_fd != -1)
+	// accept is a system call that extracts the first connection request on the queue of pending connections
+	if ((client_fd = accept(this->sock_fd, (struct sockaddr *)&(client.get_addr()), &addr_len)) < 0)
+		std::cout << "accept ret: " << client_fd << std::endl, error("accept() failed.");
+	client.set_addr();
+	if (client_fd > 0 && pollfd_size < MAX_QUEUE)
 	{
-		// accept is a system call that extracts the first connection request on the queue of pending connections
-		if ((client_fd = accept(this->sock_fd, (struct sockaddr *)&(client.get_addr()), &addr_len)) < 0
-			&& (errno != EWOULDBLOCK))
-			error("accept() failed whith error number: ", errno);
-		client.set_addr();
-		if (client_fd > 0 && pollfd_size < MAX_QUEUE)
-		{
-			std::cout << "Connection accepted." << std::endl;
-			poll_fd[pollfd_size].fd = client_fd;
-			poll_fd[pollfd_size].events = POLLIN;
-			pollfd_size++;
-			client.set_fd(client_fd);
-			clients[client_fd] = client;
-		}
-		else if (client_fd > 0)
-			std::cout << "Connection refused." << std::endl, close(client_fd);
+		std::cout << "Connection accepted." << std::endl;
+		poll_fd[pollfd_size].fd = client_fd;
+		poll_fd[pollfd_size].events = POLLIN;
+		pollfd_size++;
+		client.set_fd(client_fd);
+		clients[client_fd] = client;
 	}
+	else if (client_fd > 0)
+		std::cout << "Connection refused." << std::endl, close(client_fd);
 }
 
 void	irc_server::fd_is_client(int i)
@@ -124,11 +120,7 @@ void	irc_server::fd_is_client(int i)
 	{
 		memset(buffer, 0, 1024);
 		if ((len = recv(poll_fd[i].fd, buffer, 1024, 0)) < 0)
-		{
-			if (errno != EWOULDBLOCK)
-				std::cerr << "Error: recv() failed whith error number: " << errno << std::endl;
 			break;
-		}
 		(clients[poll_fd[i].fd].buff()).append(buffer);
 	}
 }
@@ -140,6 +132,8 @@ void	irc_server::check_pollable_discriptors(int &pollfd_size)
 	for (int i = 0; i < size; i++)
 	{
 		if (poll_fd[i].revents == 0)
+			continue;
+		if (!(poll_fd[i].revents & POLLIN))
 			continue;
 		if (poll_fd[i].revents & POLLHUP)
 		{

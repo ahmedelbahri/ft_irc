@@ -74,7 +74,7 @@ double	convert_cad(double amount, std::string towards)
 
 double	convert(std::string amount, std::string	of, std::string towards)
 {
-	std::stringstream ss; 
+	std::stringstream ss;
 	double num;
 
 	ss << amount;

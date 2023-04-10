@@ -95,12 +95,12 @@ void	irc_channel::add_member(int fd)
 		":ircserv 353 " + clients[fd].get_nick() + (this->pass == "" ? " = " : " * ") + name + " :" + get_members_list() + "\r\n"
 		":ircserv 366 " + clients[fd].get_nick() + " " + name + " :End of /NAMES list.\r\n";
 		send_error(fd, msg);
-		(":" + clients[fd].get_nick() + "!" + clients[fd].get_username() + "@" + clients[fd].get_num_addr() + " JOIN " + this->name + "\r\n", fd);
+		inform_members(":" + clients[fd].get_nick() + "!" + clients[fd].get_username() + "@" + clients[fd].get_num_addr() + " JOIN " + this->name + "\r\n", fd);
 	}
 	else
 	{
 		std::string msg = ":" + clients[fd].get_nick() + "!" + clients[fd].get_username() + "@" + clients[fd].get_num_addr() + " JOIN " + name + "\r\n"
-		":ircserv MODE m +m\r\n"
+		":ircserv MODE o +o\r\n"
 		":ircserv 353 " + clients[fd].get_nick() + (this->pass == "" ? " = " : " * ") + name + " :@" + clients[fd].get_nick() + "\r\n"
 		":ircserv 366 " + clients[fd].get_nick() + " " + name + " :End of /NAMES list.\r\n";
 		send_error(fd, msg);
